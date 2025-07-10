@@ -1,0 +1,75 @@
+# .github/workflows/test-backend.yml
+name: Test Backend
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Go Test
+      - name: Setup Go
+        continue-on-error: true
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Run Go Tests
+        continue-on-error: true
+        run: |
+          if [ -f backend/go.mod ]; then
+            cd backend
+            go test ./... -v -coverprofile=coverage.out
+            go tool cover -func=coverage.out | grep total | awk '{print $3}' | grep -q '90.0%'
+          fi
+
+      # Python Test
+      - name: Setup Python
+        continue-on-error: true
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Test Deps
+        continue-on-error: true
+        run: |
+          if [ -f backend/pyproject.toml ]; then pip install -r backend/requirements.txt; fi
+
+      - name: Run Pytest
+        continue-on-error: true
+        run: |
+          if [ -f backend/pyproject.toml ]; then pytest --cov=backend --cov-fail-under=90; fi
+
+      # .NET Test
+      - name: Setup .NET
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), '.csproj') }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run .NET Tests
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), '.csproj') }}
+        run: |
+          cd backend
+          dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+      # Java Test
+      - name: Setup Java
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), 'pom.xml') }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Java Tests with Coverage
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), 'pom.xml') }}
+        run: |
+          cd backend
+          mvn test jacoco:report
+          REPORT=$(grep -A 3 '<counter type="INSTRUCTION">' target/site/jacoco/jacoco.xml | grep '<covered>' | sed 's/<[^>]*>//g' | awk '{sum+=$1} END {if(NR>0) print sum/NR}');
+          if (( $(echo "$REPORT < 90" | bc -l) )); then echo "Coverage below 90%" && exit 1; fi

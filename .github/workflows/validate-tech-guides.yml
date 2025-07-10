@@ -1,0 +1,27 @@
+# .github/workflows/validate-tech-guides.yml
+name: Validate AGENT & Tech Guides
+
+on:
+  pull_request:
+    paths:
+      - 'backend/AGENT.md'
+      - 'backend/tech-guides/**'
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check AGENT.md for immutable sections
+        run: |
+          if grep -q "<!-- DO NOT MODIFY BELOW THIS LINE -->" backend/AGENT.md; then
+            echo "✅ AGENT.md immutable section check passed."
+          else
+            echo "❌ Missing immutable guard line in AGENT.md." && exit 1
+          fi
+
+      - name: Lint Markdown Files
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint backend/AGENT.md backend/tech-guides/*.md
