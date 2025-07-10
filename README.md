@@ -73,7 +73,8 @@ npm run dev
 ## 📄 Documentation
 
 - [📘 PRD – Product Requirements](./docs/PRD.md)
-- [🛠 TECH_SPEC – Backend + Frontend](./docs/TECH_SPEC.md)
+- [🛠 TECH_SPEC: Backend](./docs/backend/TECH_SPEC.md)
+- [🛠 TECH_SPEC: Frontend](./docs/frontend/TECH_SPEC.md)
 
 These documents define all features, data models, filters, rules, and editable field policies for the generated PDFs.
 
