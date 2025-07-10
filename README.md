@@ -43,7 +43,7 @@ cd flight-sheet-generator
 cd backend
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt  # installs FastAPI, pandas, xlrd, pytest and httpx
 uvicorn main:app --reload
 ```
 

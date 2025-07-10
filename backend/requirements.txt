@@ -1,0 +1,5 @@
+fastapi
+pandas
+xlrd
+pytest
+httpx
