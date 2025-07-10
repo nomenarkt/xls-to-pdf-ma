@@ -8,7 +8,11 @@ import pandas as pd
 REQUIRED_COLUMNS = ["Num Vol", "Départ", "Arrivée", "Imma", "SD LOC", "SA LOC"]
 
 
-def parse_and_filter_xls(file_stream: BinaryIO, mode: str, today: date) -> list[dict]:
+def parse_and_filter_xls(
+    file_stream: BinaryIO,
+    mode: str,
+    today: date,
+) -> list[dict]:
     """Load XLS stream and return rows matching the target date."""
     df = pd.read_excel(file_stream)
 
