@@ -1,36 +1,3 @@
-### 1. 💻 Codex Task: `ParseAndFilterXLS()`
-
-🧭 Context: backend
-📁 Layer: `usecase`
-🎯 Objective:
-Parse the uploaded `.xls` flight schedule and apply filtering rules based on selected `mode` (`J+1` or `J+2`) and `category` (`salon` or `prestations`).
-
-🧹 Specs:
-
-* **Input:** In-memory `.xls` file (already validated by `/process` handler)
-* **Filtering Rules:**
-
-  * Normalize timestamps (UTC, format ISO 8601)
-  * Apply `J+1` or `J+2` filtering cutoff (based on flight departure)
-  * Apply Salon-specific logic (e.g., `"Mvt"` presence)
-  * Prestations: optionally pair flights for matching
-* **Output:** JSON list of valid structured flight dicts
-
-🥪 Tests:
-
-* Valid `.xls` → returns expected rows
-* Invalid timestamp → filtered out
-* J+1 and J+2 filtering correctness
-* Salon category applies Mvt filter
-* Edge case: no matching rows
-
-📦 Follow:
-
-* Use `pandas`, no file I/O
-* Must be testable by calling `parse_and_filter_xls(file: BytesIO, mode: str, category: str)`
-
--------------------------------------------------
-
 ### 2. 💻 Codex Task: `/process endpoint`
 
 🧭 Context: backend | FastAPI
