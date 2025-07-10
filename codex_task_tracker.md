@@ -7,3 +7,4 @@
 | Table-driven tests for task_logger | context                   | ✅ Done        | Codex       | added pytest table-driven tests | 2025-07-10 | 2025-07-10 |
 | Prefix subtasks in appendTaskLog | context                   | ✅ Done        | Codex       | ts logger with parentTaskName | 2025-07-10 | 2025-07-10 |
 | Create backend folder structure | context                   | ✅ Done        | Codex       | added delivery/usecase/repository directories | 2025-07-10 | 2025-07-10 |
+| Create backend requirements file | context                   | ✅ Done        | Codex       | added requirements.txt and docs | 2025-07-10 | 2025-07-10 |

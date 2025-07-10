@@ -1,14 +1,16 @@
 import importlib.util
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 MODULE_PATH = Path(__file__).with_name("task_logger.py")
 spec = importlib.util.spec_from_file_location("task_logger", MODULE_PATH)
-tl = importlib.util.module_from_spec(spec)
+assert spec and spec.loader
+tl: Any = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
 sys.modules[spec.name] = tl
-spec.loader.exec_module(tl)
+spec.loader.exec_module(tl)  # type: ignore[call-arg]
 
 
 def _setup_files(tmp_path: Path) -> None:
