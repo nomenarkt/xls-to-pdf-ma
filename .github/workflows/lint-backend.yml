@@ -1,0 +1,73 @@
+# .github/workflows/lint-backend.yml
+name: Lint Backend
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Go Linter
+      - name: Setup Go
+        continue-on-error: true
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Run Go Linter
+        continue-on-error: true
+        run: |
+          if [ -f backend/go.mod ]; then
+            cd backend
+            go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+            golangci-lint run ./...
+          fi
+
+      # Python Linter
+      - name: Setup Python
+        continue-on-error: true
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Linter
+        continue-on-error: true
+        run: |
+          if [ -f backend/pyproject.toml ]; then pip install flake8; fi
+
+      - name: Run Flake8
+        continue-on-error: true
+        run: |
+          if [ -f backend/pyproject.toml ]; then flake8 backend; fi
+
+      # .NET Linter
+      - name: Setup .NET
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), '.csproj') }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run .NET Format Check
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), '.csproj') }}
+        run: |
+          cd backend
+          dotnet format --verify-no-changes
+
+      # Java Linter
+      - name: Setup Java
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), 'pom.xml') }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Checkstyle (Java)
+        if: ${{ contains(join(github.event.pull_request.changed_files, ','), 'pom.xml') }}
+        run: |
+          cd backend
+          mvn checkstyle:check
