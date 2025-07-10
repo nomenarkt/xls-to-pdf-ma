@@ -1,0 +1,22 @@
+{
+  "name": "xls-to-pdf-ma",
+  "version": "1.0.0",
+  "description": "This local web app transforms raw `.xls` flight schedules into **fully editable PDF command sheets** for airline operations — covering both **Pré-commandes** (J+2) and **Commandes Définitives** (J+1), with modes for **Salon** and **Prestations à Bord**.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
+  }
+}
