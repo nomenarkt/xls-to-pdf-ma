@@ -2,20 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-### 💻 Codex Task: Parse XLS Hook - useProcessXLS()
-🧭 Context: frontend
-📁 Platform: web
-🎯 Objective: Send FormData to `/process`, receive filtered flight data
-🧩 Specs:
-* Input: File, mode, category
-* Returns: `FlightRow[]` or error
-* Error boundary: 400, 500
-🧪 Tests:
-* Valid form submission → mocked JSON response
-* Failed response → error fallback
-
---------------------------------
-
 ### 💻 Codex Task: Table Renderer - FlightTable
 🧭 Context: frontend
 📁 Platform: web
@@ -141,5 +127,6 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 
 
