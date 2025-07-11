@@ -16,3 +16,4 @@
 | Mode/Category Toggle - ModeSelector | ui                        | ✅ Done        | Codex       | implemented ModeSelector with tests | 2025-07-11 | 2025-07-11 |
 | Fix root AGENT Codex Rule bullet | docs | ✅ Done        | Codex       | completed bullet text and newline | 2025-07-11 | 2025-07-11 |
 | Add openpyxl requirement  | context                   | ✅ Done        | Codex       | added openpyxl dependency and CI install step | 2025-07-11 | 2025-07-11 |
+| Parse XLS Hook - useProcessXLS() | hooks                     | ✅ Done        | Codex       | implemented useProcessXLS and tests | 2025-07-11 | 2025-07-11 |
