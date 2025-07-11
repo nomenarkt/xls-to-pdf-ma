@@ -1,24 +1,6 @@
 # 🧩 Frontend Feature Backlog
 
 ## ✅ Epic: Flight File Ingestion & Filtering
-### 💻 Codex Task: Upload XLS - UploadBox
-🧭 Context: frontend
-📁 Platform: web
-🎯 Objective: Let the user upload `.xls` files as `FormData`
-🧩 Specs:
-* Props: `onUpload(file: File) => void`
-* UI Design: Tailwind; drag-and-drop + file picker
-* Behavior:
-  * Accept only `.xls`
-  * Display filename and validation errors
-* Validation: required `.xls`, max size 5MB
-* Data: triggers `useProcessXLS()`
-🧪 Tests:
-* Reject wrong file types
-* Show filename after selection
-* Triggers upload callback
-
---------------------------------
 
 ### 💻 Codex Task: Mode/Category Toggle - ModeSelector
 🧭 Context: frontend
