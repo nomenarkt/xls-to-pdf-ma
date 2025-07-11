@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-let appendTaskLog: typeof import("./taskLogger").appendTaskLog;
+let updateTaskTracker: typeof import("./taskLogger").updateTaskTracker;
 
 const tmp = path.join(__dirname, "__tmp__");
 
@@ -13,7 +13,7 @@ beforeEach(() => {
   );
   process.env.BASE_DIR = tmp;
   jest.resetModules();
-  ({ appendTaskLog } = require("./taskLogger"));
+  ({ updateTaskTracker } = require("./taskLogger"));
 });
 
 afterEach(() => {
@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 test("prefixes task with parent name", async () => {
-  await appendTaskLog(
+  await updateTaskTracker(
     {
       taskName: "Child",
       layers: "context",
@@ -32,14 +32,14 @@ test("prefixes task with parent name", async () => {
     },
     "Parent",
   );
-  const logPath = path.join(tmp, "frontend", "task_log.md");
+  const logPath = path.join(tmp, "codex_task_tracker.md");
   const content = fs.readFileSync(logPath, "utf8");
   expect(content).toContain("Parent – Child");
 });
 
 test("cleanBacklog removes prefixed tasks", async () => {
   const backlogPath = path.join(tmp, "frontend", "backlog.md");
-  await appendTaskLog(
+  await updateTaskTracker(
     {
       taskName: "Part1",
       layers: "context",

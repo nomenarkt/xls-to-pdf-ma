@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 const BASE_DIR = process.env.BASE_DIR || ""; // Optional override for tests
-const TASK_LOG_FILE = "frontend/task_log.md";
+const TASK_LOG_FILE = "codex_task_tracker.md";
 const BACKLOG_FILE = "frontend/backlog.md";
 
 export interface TaskLogEntry {
@@ -15,7 +15,7 @@ export interface TaskLogEntry {
   notes: string;
 }
 
-export async function appendTaskLog(
+export async function updateTaskTracker(
   entry: TaskLogEntry,
   parentTaskName?: string,
 ): Promise<void> {
@@ -29,7 +29,8 @@ export async function appendTaskLog(
   }
 
   const logPath = path.join(BASE_DIR, TASK_LOG_FILE);
-  const row = `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} |\n`;
+  const now = new Date().toISOString().slice(0, 10);
+  const row = `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${now} | ${now} |\n`;
 
   await fs.promises.appendFile(logPath, row);
   await cleanBacklog();
@@ -92,7 +93,7 @@ async function parseDoneTasks(): Promise<Set<string>> {
 
     for (const line of lines) {
       const fields = line.split("|").map((f) => f.trim());
-      if (fields.length < 5) continue;
+      if (fields.length < 7) continue;
       if (fields[3] === "✅ Done") {
         tasks.add(fields[1]);
       }
