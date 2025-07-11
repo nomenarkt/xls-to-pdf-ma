@@ -2,18 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-### 💻 Codex Task: Fix safer-buffer dependency for npm tests
-🧭 Context: frontend
-📁 Platform: web
-🎯 Objective: Resolve missing `safer-buffer` module error to unblock test suite execution
-🧩 Specs:
-* Ensure `safer-buffer` is installed and resolvable in test/runtime environment
-* Update `package.json` and/or Dockerfile/CI env as needed
-🧪 Tests:
-* Run `npm test` → passes without module error
-
---------------------------------
-
 ### 💻 Codex Task: Integration Test – UploadBox + ModeSelector + useProcessXLS
 🧭 Context: frontend
 📁 Platform: web
@@ -168,6 +156,7 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 
 
 

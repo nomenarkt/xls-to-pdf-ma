@@ -18,6 +18,7 @@
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.1.8",
+    "safer-buffer": "^2.1.2",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "react": "^19.1.0",
