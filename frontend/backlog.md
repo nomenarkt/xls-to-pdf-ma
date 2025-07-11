@@ -45,6 +45,34 @@
 
 --------------------------------
 
+### 💻 Codex Task: Ensure ModeSelector is consumed in parent screen
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Render `ModeSelector` in the parent UI (XLS upload + table context) and wire its output
+🧩 Specs:
+* Use global context or prop drilling to pass `mode` and `category`
+* Ensure it's visible and functional on the Upload+Table screen
+🧪 Tests:
+* Component appears in DOM tree
+* Prop values propagate to `useProcessXLS` correctly
+
+--------------------------------
+
+### 💻 Codex Task: Add Storybook stories for ModeSelector
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Add isolated stories for `ModeSelector` for visual regression and testing
+🧩 Specs:
+* Default view
+* Mode toggled
+* Category toggled
+* Active states visually distinct
+🧪 Tests:
+* Render all toggle states
+* Actions tab logs changes via `onChange` handler
+
+--------------------------------
+
 ## ✅ Epic: Generate PDF
 ### 💻 Codex Task: Submit PDF Data - useGeneratePDF()
 🧭 Context: frontend
