@@ -12,3 +12,4 @@
 | /process endpoint         | delivery                  | ✅ Done        | Codex       | implemented FastAPI route | 2025-07-10 | 2025-07-10 |
 | Upload XLS - UploadBox    | ui                        | ✅ Done        | Codex       | initial implementation | 2025-07-11 | 2025-07-11 |
 | Update frontend task logger | context                   | ✅ Done        | Codex       | switched to codex_task_tracker.md | 2025-07-11 | 2025-07-11 |
+| Add jest-environment-jsdom | context                   | ✅ Done        | Codex       | added dev dependency | 2025-07-11 | 2025-07-11 |
