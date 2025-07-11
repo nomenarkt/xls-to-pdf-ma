@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import sys
 from datetime import date, datetime
 from importlib import util
-import sys
 from io import BytesIO
 from pathlib import Path
 from typing import Any

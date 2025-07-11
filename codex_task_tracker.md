@@ -15,3 +15,4 @@
 | Add jest-environment-jsdom | context                   | ✅ Done        | Codex       | added dev dependency | 2025-07-11 | 2025-07-11 |
 | Mode/Category Toggle - ModeSelector | ui                        | ✅ Done        | Codex       | implemented ModeSelector with tests | 2025-07-11 | 2025-07-11 |
 | Fix root AGENT Codex Rule bullet | docs | ✅ Done        | Codex       | completed bullet text and newline | 2025-07-11 | 2025-07-11 |
+| Add openpyxl requirement  | context                   | ✅ Done        | Codex       | added openpyxl dependency and CI install step | 2025-07-11 | 2025-07-11 |
