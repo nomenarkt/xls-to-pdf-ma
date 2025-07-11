@@ -2,20 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-### 💻 Codex Task: Mode/Category Toggle - ModeSelector
-🧭 Context: frontend
-📁 Platform: web
-🎯 Objective: User selects between 2 modes and 2 categories
-🧩 Specs:
-* Props: `mode`, `category`, `onChange(mode, category)`
-* UI Design: Tailwind toggle buttons
-* Behavior: Active states toggle on click
-🧪 Tests:
-* Click toggles mode/category
-* Callback sends correct values
-
---------------------------------
-
 ### 💻 Codex Task: Parse XLS Hook - useProcessXLS()
 🧭 Context: frontend
 📁 Platform: web
@@ -127,4 +113,5 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 

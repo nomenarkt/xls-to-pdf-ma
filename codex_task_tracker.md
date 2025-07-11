@@ -13,3 +13,4 @@
 | Upload XLS - UploadBox    | ui                        | ✅ Done        | Codex       | initial implementation | 2025-07-11 | 2025-07-11 |
 | Update frontend task logger | context                   | ✅ Done        | Codex       | switched to codex_task_tracker.md | 2025-07-11 | 2025-07-11 |
 | Add jest-environment-jsdom | context                   | ✅ Done        | Codex       | added dev dependency | 2025-07-11 | 2025-07-11 |
+| Mode/Category Toggle - ModeSelector | ui                        | ✅ Done        | Codex       | implemented ModeSelector with tests | 2025-07-11 | 2025-07-11 |
