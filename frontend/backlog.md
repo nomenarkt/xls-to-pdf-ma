@@ -2,22 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-### 💻 Codex Task: Integration Test – UploadBox + ModeSelector + useProcessXLS
-🧭 Context: frontend
-📁 Platform: web
-🎯 Objective: Validate interaction flow from file upload + mode/category → parsed results via `useProcessXLS`
-🧩 Specs:
-* Simulate full screen state:
-  * Upload `.xls` file
-  * Select mode/category
-  * Trigger parse via hook
-* Mock `/process` backend and return valid `FlightRow[]`
-🧪 Tests:
-* Simulate valid flow → renders expected rows
-* Simulate error response → fallback UI appears
-
---------------------------------
-
 ### 💻 Codex Task: Document FlightRow structure for editor UI
 🧭 Context: shared
 📁 Platform: web
@@ -156,6 +140,7 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 
 
 
