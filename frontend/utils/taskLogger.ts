@@ -24,15 +24,28 @@ export async function updateTaskTracker(
     taskName = `${parentTaskName} – ${taskName}`;
   }
 
-  if (await hasDuplicateTask(taskName)) {
-    throw new Error(`Duplicate task detected: ${taskName}`);
-  }
-
   const logPath = path.join(BASE_DIR, TASK_LOG_FILE);
   const now = new Date().toISOString().slice(0, 10);
-  const row = `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${now} | ${now} |\n`;
 
-  await fs.promises.appendFile(logPath, row);
+  if (await hasDuplicateTask(taskName)) {
+    const content = await fs.promises.readFile(logPath, "utf8").catch(() => "");
+    const lines = content.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const fields = lines[i].split("|").map((f) => f.trim());
+      if (fields.length < 7) continue;
+      if (fields[1] === taskName) {
+        const created = fields[6] || now;
+        lines[i] =
+          `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${created} | ${now} |`;
+        break;
+      }
+    }
+    await fs.promises.writeFile(logPath, lines.join("\n"));
+  } else {
+    const row = `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${now} | ${now} |\n`;
+    await fs.promises.appendFile(logPath, row);
+  }
+
   await cleanBacklog();
 }
 

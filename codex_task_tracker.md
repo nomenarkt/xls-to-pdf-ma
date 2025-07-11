@@ -20,3 +20,4 @@
 | Integration Test – UploadBox + ModeSelector + useProcessXLS | ui                        | ✅ Done        | frontend    | integration test added | 2025-07-11 | 2025-07-11 |
 | Document FlightRow structure for editor UI | docs                      | ✅ Done        | frontend    | added J/C and Y/C docs | 2025-07-11 | 2025-07-11 |
 | Fix editable field definition in FlightRow TECH_SPEC | docs                      | ✅ Done        | frontend    | clarify editable j/y fields | 2025-07-11 | 2025-07-11 |
+| Rewrite duplicates in updateTaskTracker | context                   | ✅ Done        | frontend    | rewrite duplicate rows and add tests | 2025-07-11 | 2025-07-11 |

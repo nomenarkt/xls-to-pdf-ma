@@ -52,3 +52,33 @@ test("cleanBacklog removes prefixed tasks", async () => {
   const backlog = fs.readFileSync(backlogPath, "utf8");
   expect(backlog.trim()).toBe("");
 });
+
+test("updates existing row when task is logged twice", async () => {
+  const logPath = path.join(tmp, "codex_task_tracker.md");
+  jest.useFakeTimers().setSystemTime(new Date("2025-01-01"));
+  await updateTaskTracker({
+    taskName: "Dup",
+    layers: "context",
+    status: "⏳ In Progress",
+    assignedTo: "Codex",
+    notes: "first",
+  });
+  jest.setSystemTime(new Date("2025-01-02"));
+  await updateTaskTracker({
+    taskName: "Dup",
+    layers: "context",
+    status: "✅ Done",
+    assignedTo: "Codex",
+    notes: "second",
+  });
+  jest.useRealTimers();
+  const lines = fs
+    .readFileSync(logPath, "utf8")
+    .split("\n")
+    .filter((l) => l.includes("Dup"));
+  expect(lines).toHaveLength(1);
+  const line = lines[0];
+  expect(line).toContain("✅ Done");
+  expect(line).toContain("2025-01-01");
+  expect(line).toContain("2025-01-02");
+});
