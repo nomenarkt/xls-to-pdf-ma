@@ -2,6 +2,47 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
+### 💻 Codex Task: Fix safer-buffer dependency for npm tests
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Resolve missing `safer-buffer` module error to unblock test suite execution
+🧩 Specs:
+* Ensure `safer-buffer` is installed and resolvable in test/runtime environment
+* Update `package.json` and/or Dockerfile/CI env as needed
+🧪 Tests:
+* Run `npm test` → passes without module error
+
+--------------------------------
+
+### 💻 Codex Task: Integration Test – UploadBox + ModeSelector + useProcessXLS
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Validate interaction flow from file upload + mode/category → parsed results via `useProcessXLS`
+🧩 Specs:
+* Simulate full screen state:
+  * Upload `.xls` file
+  * Select mode/category
+  * Trigger parse via hook
+* Mock `/process` backend and return valid `FlightRow[]`
+🧪 Tests:
+* Simulate valid flow → renders expected rows
+* Simulate error response → fallback UI appears
+
+--------------------------------
+
+### 💻 Codex Task: Document FlightRow structure for editor UI
+🧭 Context: shared
+📁 Platform: web
+🎯 Objective: Write internal dev doc describing how `FlightRow` maps to editable table
+🧩 Specs:
+* Field mapping:
+  * `depart`, `arrivee`, `imma`, `sd_loc`, `sa_loc` → editable inputs
+  * `num_vol` → read-only
+* Describe where/how to extend the type if new fields appear
+🧪 Tests: N/A (docs only)
+
+--------------------------------
+
 ### 💻 Codex Task: Table Renderer - FlightTable
 🧭 Context: frontend
 📁 Platform: web
