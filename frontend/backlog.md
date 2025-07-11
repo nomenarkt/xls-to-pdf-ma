@@ -2,19 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-### 💻 Codex Task: Document FlightRow structure for editor UI
-🧭 Context: shared
-📁 Platform: web
-🎯 Objective: Write internal dev doc describing how `FlightRow` maps to editable table
-🧩 Specs:
-* Field mapping:
-  * `depart`, `arrivee`, `imma`, `sd_loc`, `sa_loc` → editable inputs
-  * `num_vol` → read-only
-* Describe where/how to extend the type if new fields appear
-🧪 Tests: N/A (docs only)
-
---------------------------------
-
 ### 💻 Codex Task: Table Renderer - FlightTable
 🧭 Context: frontend
 📁 Platform: web
@@ -140,6 +127,7 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 
 
 
