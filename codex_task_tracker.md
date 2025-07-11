@@ -10,3 +10,4 @@
 | Create backend requirements file | context                   | ✅ Done        | Codex       | added requirements.txt and docs | 2025-07-10 | 2025-07-10 |
 | ParseAndFilterXLS()       | usecase                   | ✅ Done        | Codex       | implemented parser in backend/repository/xls_parser.py | 2025-07-10 | 2025-07-10 |
 | /process endpoint         | delivery                  | ✅ Done        | Codex       | implemented FastAPI route | 2025-07-10 | 2025-07-10 |
+| Upload XLS - UploadBox    | ui                        | ✅ Done        | Codex       | initial implementation | 2025-07-11 | 2025-07-11 |

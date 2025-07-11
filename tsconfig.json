@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": ["frontend/**/*.ts"]
+  "include": ["frontend/**/*.ts", "frontend/**/*.tsx"]
 }
