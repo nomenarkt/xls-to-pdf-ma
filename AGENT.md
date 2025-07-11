@@ -54,4 +54,4 @@ Each Epic must also include:
 > - Read `/docs/backend/epic/{EPIC_NAME}/PRD.md`
 > - Locate the feature under `{FEATURE}/PRD.md` and `TECH_SPEC.md`
 > - Follow the Clean Architecture flow from `delivery → usecase → repository`
-> - Match test expectations defined in the TECH_SPEC
+> - Match test expectations defined in the TECH_SPEC.
