@@ -17,3 +17,4 @@
 | Fix root AGENT Codex Rule bullet | docs | ✅ Done        | Codex       | completed bullet text and newline | 2025-07-11 | 2025-07-11 |
 | Add openpyxl requirement  | context                   | ✅ Done        | Codex       | added openpyxl dependency and CI install step | 2025-07-11 | 2025-07-11 |
 | Parse XLS Hook - useProcessXLS() | hooks                     | ✅ Done        | Codex       | implemented useProcessXLS and tests | 2025-07-11 | 2025-07-11 |
+| Fix safer-buffer dependency for npm tests | context                   | ✅ Done        | Codex       | added safer-buffer dependency | 2025-07-11 | 2025-07-11 |
