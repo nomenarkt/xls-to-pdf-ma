@@ -35,10 +35,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python Test Deps
+      - name: Install Python Deps
         continue-on-error: true
         run: |
-          if [ -f backend/pyproject.toml ]; then pip install -r backend/requirements.txt; fi
+          pip install -r backend/requirements.txt
 
       - name: Run Pytest
         continue-on-error: true
