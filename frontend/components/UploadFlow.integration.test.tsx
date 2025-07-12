@@ -31,8 +31,8 @@ const rows: FlightRow[] = [
 ];
 
 const TestScreen: React.FC = () => {
-  const [mode, setMode] = React.useState<Mode>("precommandes");
-  const [category, setCategory] = React.useState<Category>("salon");
+  const [mode, setMode] = React.useState<Mode>(Mode.PRECOMMANDES);
+  const [category, setCategory] = React.useState<Category>(Category.SALON);
   const [data, setData] = React.useState<FlightRow[] | null>(null);
   const [error, setError] = React.useState(false);
   const processXLS = useProcessXLS();

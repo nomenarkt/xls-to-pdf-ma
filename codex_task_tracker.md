@@ -25,3 +25,5 @@
 | Table Renderer – FlightTable                                | ui        | ✅ Done    | frontend    | implement table component                              | 2025-07-12  | 2025-07-12  |
 | Seat Class Validation - FlightTable                         | ui        | ✅ Done    | frontend    | j/y class validation 0-99 with error state             | 2025-07-12  | 2025-07-12  |
 | IPC Bridge Documentation                                    | docs      | ✅ Done    | frontend    | PRD + TECH_SPEC for Python subprocess bridge           | 2025-07-12  | 2025-07-12  |
+| Update useProcessXLS types                                  | hooks     | ✅ Done    | frontend    | update hook to use Mode and Category types             | 2025-07-12  | 2025-07-12  |
+| Add runtime validation to useProcessXLS                     | hooks     | ✅ Done    | frontend    | runtime checks for Mode/Category enums                 | 2025-07-12  | 2025-07-12  |

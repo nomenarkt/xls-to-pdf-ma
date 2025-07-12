@@ -1,6 +1,7 @@
 import { useProcessXLS } from "./useProcessXLS";
 import axios from "../api/axios";
 import { FlightRow } from "../types/flight";
+import { Mode, Category } from "../../components/ModeSelector";
 
 jest.mock("../api/axios");
 
@@ -26,7 +27,11 @@ describe("useProcessXLS", () => {
     ];
     mockedPost.mockResolvedValue({ status: 200, data: rows });
     const processXLS = useProcessXLS();
-    const result = await processXLS(new File([], "f.xls"), "pre", "salon");
+    const result = await processXLS(
+      new File([], "f.xls"),
+      Mode.PRECOMMANDES,
+      Category.SALON,
+    );
     expect(result).toEqual(rows);
     expect(mockedPost).toHaveBeenCalledWith("/process", expect.any(FormData));
   });
@@ -36,7 +41,23 @@ describe("useProcessXLS", () => {
     mockedPost.mockRejectedValue(error);
     const processXLS = useProcessXLS();
     await expect(
-      processXLS(new File([], "f.xls"), "pre", "salon"),
+      processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
     ).rejects.toBe(error);
+  });
+
+  it("validates mode", async () => {
+    const processXLS = useProcessXLS();
+    await expect(
+      processXLS(new File([], "f.xls"), "bad" as Mode, Category.SALON),
+    ).rejects.toThrow("Invalid mode");
+    expect(mockedPost).not.toHaveBeenCalled();
+  });
+
+  it("validates category", async () => {
+    const processXLS = useProcessXLS();
+    await expect(
+      processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, "bad" as Category),
+    ).rejects.toThrow("Invalid category");
+    expect(mockedPost).not.toHaveBeenCalled();
   });
 });
