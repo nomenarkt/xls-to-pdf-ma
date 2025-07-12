@@ -7,6 +7,7 @@ import { ModeSelector, Mode, Category } from "./ModeSelector";
 import { UploadBox } from "./UploadBox";
 import { useProcessXLS } from "../shared/hooks/useProcessXLS";
 import { FlightRow } from "../shared/types/flight";
+import { FlightTable } from "./FlightTable";
 
 jest.mock("../shared/api/axios");
 
@@ -56,13 +57,7 @@ const TestScreen: React.FC = () => {
         }}
       />
       <UploadBox onUpload={handleUpload} />
-      {data && (
-        <ul>
-          {data.map((r) => (
-            <li key={r.num_vol}>{r.num_vol}</li>
-          ))}
-        </ul>
-      )}
+      {data && <FlightTable rows={data} onChange={() => {}} />}
       {error && <p role="alert">Failed</p>}
     </div>
   );
