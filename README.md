@@ -20,11 +20,11 @@ This local web app transforms raw `.xls` flight schedules into **fully editable 
 
 ## 📁 Modules
 
-| Area       | Description                                  |
-|------------|----------------------------------------------|
-| `backend/` | FastAPI server, XLS parser, PDF generator    |
-| `frontend/`| React app for XLS upload and table editing   |
-| `docs/`    | Product + Technical documentation (PRD/Specs)|
+| Area        | Description                                   |
+| ----------- | --------------------------------------------- |
+| `backend/`  | FastAPI server, XLS parser, PDF generator     |
+| `frontend/` | React app for XLS upload and table editing    |
+| `docs/`     | Product + Technical documentation (PRD/Specs) |
 
 ---
 
@@ -52,21 +52,34 @@ uvicorn main:app --reload
 ```bash
 cd frontend
 npm install
+cp ../.env.sample .env  # configure NEXT_PUBLIC_* variables
 npm run dev
 ```
 
 - Visit: `http://localhost:3000`
+- Configuration values come from `.env` (see `.env.sample` for required keys)
+
+### Environment Variables
+
+```
+NEXT_PUBLIC_API_BASE_URL=<http://localhost:8000>
+NEXT_PUBLIC_ENVIRONMENT=<development | staging | production>
+NEXT_PUBLIC_SENTRY_DSN=<optional Sentry DSN>
+NEXT_PUBLIC_FEATURE_FLAGS=<optional JSON flags>
+```
+
+Copy `.env.sample` to `.env` and adjust these values as needed.
 
 ---
 
 ## 🛠 Tech Stack
 
-| Layer       | Tech                     |
-|-------------|--------------------------|
-| Frontend    | React, Tailwind CSS      |
-| Backend     | FastAPI, Pandas          |
-| XLS Parsing | `openpyxl`               |
-| PDF Engine  | `reportlab` or `pdfkit`  |
+| Layer       | Tech                    |
+| ----------- | ----------------------- |
+| Frontend    | React, Tailwind CSS     |
+| Backend     | FastAPI, Pandas         |
+| XLS Parsing | `openpyxl`              |
+| PDF Engine  | `reportlab` or `pdfkit` |
 
 ---
 
@@ -82,12 +95,12 @@ These documents define all features, data models, filters, rules, and editable f
 
 ## ✅ Sample Command Modes
 
-| Mode                                 | Filter Flights On |
-|--------------------------------------|-------------------|
-| Pré-commandes – Salon                | Today + 2 (J+2)   |
-| Pré-commandes – Prestations à Bord   | Today + 2 (J+2)   |
-| Commandes Définitives – Salon        | Today + 1 (J+1)   |
-| Commandes Définitives – Prestations  | Today + 1 (J+1)   |
+| Mode                                | Filter Flights On |
+| ----------------------------------- | ----------------- |
+| Pré-commandes – Salon               | Today + 2 (J+2)   |
+| Pré-commandes – Prestations à Bord  | Today + 2 (J+2)   |
+| Commandes Définitives – Salon       | Today + 1 (J+1)   |
+| Commandes Définitives – Prestations | Today + 1 (J+1)   |
 
 > Example: If today is July 10 → Pré-commandes = July 12, Commandes Définitives = July 11
 
@@ -101,6 +114,7 @@ These documents define all features, data models, filters, rules, and editable f
 - ✅ Local time fields preserved
 
 Reference examples:
+
 - `Pré-commandes - Prestations à Bord.pdf`
 - `Pré-commandes - Salon.pdf`
 
