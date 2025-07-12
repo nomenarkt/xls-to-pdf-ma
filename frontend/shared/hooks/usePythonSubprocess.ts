@@ -3,6 +3,22 @@ import { readFile } from "fs/promises";
 import { Mode, Category } from "../../components/ModeSelector";
 import { FlightRow } from "../types/flight";
 
+function buildPythonErrorMessage(
+  stderr: string,
+  code?: number | null,
+  hint = "Python subprocess failed to parse XLS",
+): Error {
+  const parts = [hint];
+  const trimmed = stderr.trim();
+  if (trimmed) {
+    parts.push(trimmed);
+  }
+  if (code !== undefined) {
+    parts.push(`exit code ${code}`);
+  }
+  return new Error(parts.join(": "));
+}
+
 export interface PythonFilters {
   mode: Mode;
   category: Category;
@@ -64,7 +80,7 @@ export function usePythonSubprocess() {
       proc.on("close", async (code) => {
         clearTimeout(timer);
         if (code !== 0) {
-          reject(new Error(stderr || `Process exited with code ${code}`));
+          reject(buildPythonErrorMessage(stderr, code));
           return;
         }
         try {
@@ -76,7 +92,7 @@ export function usePythonSubprocess() {
             const message = stderr.trim()
               ? stderr.trim()
               : "Invalid JSON output from Python process";
-            reject(new Error(message));
+            reject(buildPythonErrorMessage(message, code));
           }
         } catch (err) {
           reject(err);

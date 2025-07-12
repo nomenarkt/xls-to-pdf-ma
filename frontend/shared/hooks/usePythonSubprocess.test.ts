@@ -75,7 +75,9 @@ describe("usePythonSubprocess", () => {
     });
     child.stderr.emit("data", "bad");
     child.emit("close", 1);
-    await expect(promise).rejects.toThrow("bad");
+    await expect(promise).rejects.toThrow(
+      "Python subprocess failed to parse XLS: bad: exit code 1",
+    );
   });
 
   it("rejects on invalid JSON", async () => {
@@ -89,7 +91,7 @@ describe("usePythonSubprocess", () => {
     });
     child.emit("close", 0);
     await expect(promise).rejects.toThrow(
-      "Invalid JSON output from Python process",
+      "Python subprocess failed to parse XLS: Invalid JSON output from Python process: exit code 0",
     );
   });
 
@@ -104,7 +106,9 @@ describe("usePythonSubprocess", () => {
     });
     child.stderr.emit("data", "parse error");
     child.emit("close", 0);
-    await expect(promise).rejects.toThrow("parse error");
+    await expect(promise).rejects.toThrow(
+      "Python subprocess failed to parse XLS: parse error: exit code 0",
+    );
   });
 
   it("rejects on timeout", async () => {
@@ -173,7 +177,9 @@ describe("usePythonSubprocess", () => {
       category: Category.SALON,
     });
     child.emit("close", null, "SIGTERM");
-    await expect(promise).rejects.toThrow("Process exited with code null");
+    await expect(promise).rejects.toThrow(
+      "Python subprocess failed to parse XLS: exit code null",
+    );
     await new Promise(process.nextTick);
     expect(unhandled).toHaveLength(0);
     process.off("unhandledRejection", handler);
