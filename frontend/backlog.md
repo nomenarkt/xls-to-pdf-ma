@@ -2,26 +2,6 @@
 
 ## ✅ Epic: Flight File Ingestion & Filtering
 
-💻 Codex Task: Table Renderer – FlightTable  
-🧭 Context: frontend  
-📁 Platform: web  
-🎯 Objective: Render browser-based table for reviewing parsed flight data and editing seat class fields  
-🧩 Specs:
-- Props: `rows: FlightRow[]`, `onChange(updatedRow: FlightRow): void`
-- UI: Tailwind scrollable table with sticky header
-- Column behavior:
-  - **Read-only in browser UI**: Num Vol, Départ, Arrivée, Imma, SD LOC, SA LOC  
-    (these are parsed from `.xls`, may be modified in PDF output via CLI only)
-  - **Editable in browser**: J/C (`j_class`), Y/C (`y_class`)
-- Inputs: numeric type for J/C and Y/C, initialized to `0` if missing
-🧪 Tests:
-- Renders all columns with correct values and layout
-- Allows editing only J/C and Y/C fields
-- Triggers `onChange` with updated `FlightRow` on user edit
-- Handles edge cases: undefined fields, invalid input, max char length
-
---------------------------------
-
 ### 💻 Codex Task: IPC Bridge - usePythonSubprocess()
 🧭 Context: frontend
 📁 Platform: web
@@ -62,6 +42,21 @@
 🧪 Tests:
 * Render all toggle states
 * Actions tab logs changes via `onChange` handler
+
+### 💻 Codex Task: Seat Class Validation
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Enforce numeric validation rules for `j_class` and `y_class`
+🧩 Specs:
+* Inputs min `0`, max `99`, step `1`
+* Letters or decimals blocked
+* Negative or >99 values show error with red border
+* Invalid fields prevent update until corrected
+🧪 Tests:
+* Typing `-1`, `abc`, `100` → error highlight
+* Typing `23`, `0`, `99` → valid
+* Blur triggers validation display
+* Error clears when corrected
 
 --------------------------------
 
@@ -133,6 +128,7 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
+
 
 
 
