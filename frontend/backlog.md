@@ -1,5 +1,28 @@
 # 🧩 Frontend Feature Backlog
 
+💻 Codex Task: Hook – usePythonSubprocess
+🧭 Context: frontend | shared
+📁 Platform: shared
+🎯 Objective: Spawn a backend Python subprocess with typed arguments and capture its structured output.
+🧩 Specs:
+- Params: `{ mode: Mode; category: Category }`
+- Mode and Category: strict union types
+- Behavior:
+  - Spawns a subprocess using a configured Python entrypoint
+  - Parses stdout (expecting JSON)
+  - Catches stderr or timeouts as error states
+- Return: `{ data?: T; error?: string; status: 'idle' | 'loading' | 'success' | 'error' }`
+- Environment: uses `NEXT_PUBLIC_API_BASE_URL` or fallback default
+- Fallback: Local mode stubbed with a mock response in test
+
+🧪 Tests:
+- ✅ Unit: mock `child_process.spawn` to test stdout, stderr, invalid JSON, timeouts
+- ✅ Validate typed input (Mode/Category enums only)
+- ✅ Integration: simulate call via upload flow with XLS file and assert parsed result
+- ✅ Ensure hook error boundary does not break app
+
+--------------------------------
+
 ## ✅ Epic: Flight File Ingestion & Filtering
 
 ### 💻 Codex Task: IPC Bridge - usePythonSubprocess()
