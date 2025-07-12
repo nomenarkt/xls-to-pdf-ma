@@ -20,6 +20,8 @@ describe("useProcessXLS", () => {
         imma: "A320",
         sd_loc: "A",
         sa_loc: "B",
+        j_class: 0,
+        y_class: 0,
       },
     ];
     mockedPost.mockResolvedValue({ status: 200, data: rows });
