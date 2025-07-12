@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { FlightTable } from "./FlightTable";
 import { FlightRow } from "../shared/types/flight";
@@ -30,11 +31,12 @@ describe("FlightTable", () => {
     expect(inputs).toHaveLength(2);
   });
 
-  test("onChange called with updated row", () => {
+  test("onChange called with updated row", async () => {
     const handle = jest.fn();
     render(<FlightTable rows={[baseRow]} onChange={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
-    fireEvent.change(input, { target: { value: "5" } });
+    await userEvent.clear(input);
+    await userEvent.type(input, "5");
     expect(handle).toHaveBeenCalledWith({ ...baseRow, j_class: 5 });
   });
 
@@ -44,29 +46,32 @@ describe("FlightTable", () => {
     expect(screen.getAllByRole("spinbutton")[0]).toHaveValue(0);
   });
 
-  test("invalid input shows error and blocks change", () => {
+  test("invalid input shows error and blocks change", async () => {
     const handle = jest.fn();
     render(<FlightTable rows={[baseRow]} onChange={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
-    fireEvent.change(input, { target: { value: "abc" } });
+    await userEvent.clear(input);
+    await userEvent.type(input, "abc");
     expect(handle).not.toHaveBeenCalled();
     expect(input).toHaveClass("border-red-500");
   });
 
-  test("values outside range show error", () => {
+  test("values outside range show error", async () => {
     render(<FlightTable rows={[baseRow]} onChange={() => {}} />);
     const input = screen.getAllByRole("spinbutton")[0];
-    fireEvent.change(input, { target: { value: "100" } });
-    fireEvent.blur(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, "100");
+    input.blur();
     expect(input).toHaveClass("border-red-500");
   });
 
-  test("valid input clears error", () => {
+  test("valid input clears error", async () => {
     const handle = jest.fn();
     render(<FlightTable rows={[baseRow]} onChange={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
-    fireEvent.change(input, { target: { value: "23" } });
-    fireEvent.blur(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, "23");
+    input.blur();
     expect(handle).toHaveBeenCalledWith({ ...baseRow, j_class: 23 });
     expect(input).not.toHaveClass("border-red-500");
   });
