@@ -1,7 +1,3 @@
-Here is the **full PRD and TECH\_SPEC** for **🧱 Epic 1: Flight File Ingestion & Filtering (Core XLS Parser)**, following our architecture standards.
-
----
-
 # 📘 PRD – Epic 1: Flight File Ingestion & Filtering
 
 ## 🧱 Epic Title
