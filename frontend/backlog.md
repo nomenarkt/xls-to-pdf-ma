@@ -1,6 +1,82 @@
 # 🧩 Frontend Feature Backlog
 -------------------------------
 
+### 💻 Codex Task: Add expect.assertions() to subprocess tests
+🧭 Context: shared
+📁 Platform: shared
+🎯 Objective: Enforce test rigor by requiring at least one assertion in async subprocess test blocks
+🧩 Specs:
+* Wrap relevant test blocks in `usePythonSubprocess.test.ts` with `expect.assertions(n)`
+* Target tests handling `.on('error')`, `.on('close')`, and `Promise.reject`
+🧪 Tests:
+* Validate tests fail when async assertions aren’t fulfilled
+* Confirm no false positives on promise rejection
+
+-------------------------------
+
+### 💻 Codex Task: Propagate stderr on signal-based exit
+🧭 Context: shared
+📁 Platform: shared
+🎯 Objective: Ensure `stderr` is included when the subprocess exits via `.exit()` or `.close()` with signal or error
+🧩 Specs:
+* Extend `usePythonSubprocess.ts` to inspect `stderr` even on `.close()`
+* Prioritize stderr inclusion if present
+🧪 Tests:
+* Simulate signal-based `.close()` with stderr populated
+* Ensure error message includes stderr in debug mode
+
+-------------------------------
+
+### 💻 Codex Task: Inline schema or example for FlightRow
+🧭 Context: shared
+📁 Platform: web
+🎯 Objective: Embed developer-facing schema details near the subprocess hook to improve dev ergonomics
+🧩 Specs:
+* Import and reference Zod schema (`FlightRowSchema`) if defined
+* OR include short field example directly in JSDoc of `usePythonSubprocess.ts`
+🧪 Tests:
+* N/A (doc-only)
+
+-------------------------------
+
+### 💻 Codex Task: Standardize userEvent.setup() across test files
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Ensure all tests using `userEvent` use consistent setup and teardown
+🧩 Specs:
+* Refactor all test files using `userEvent` to initialize via `userEvent.setup()`
+* Remove direct `fireEvent` references
+🧪 Tests:
+* No change in behavior; visual diff baseline must remain stable
+
+-------------------------------
+
+### 💻 Codex Task: Extract renderWithUser utility
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Avoid repeated setup boilerplate when rendering components with `userEvent`
+🧩 Specs:
+* Create `test-utils/renderWithUser.ts`
+* Include wrapper with `userEvent.setup()` and RTL’s `render()`
+🧪 Tests:
+* Replace direct `render(...)` + `userEvent.setup()` combo with utility
+* Snapshot or behavior tests pass unchanged
+
+-------------------------------
+
+### 💻 Codex Task: Add drag-and-drop tests for UploadBox
+🧭 Context: frontend
+📁 Platform: web
+🎯 Objective: Simulate drag-and-drop interaction on `UploadBox` component
+🧩 Specs:
+* Extend `UploadBox.test.tsx` with `DataTransfer` mocks
+* Trigger `dragEnter`, `drop` events
+🧪 Tests:
+* Drop triggers file parsing
+* UI updates on hover and drop
+
+-------------------------------
+
 ### 💻 Codex Task: Improve subprocess error surfacing for UI
 🧭 Context: shared
 📁 Platform: shared
@@ -128,12 +204,3 @@ export interface FlightRow {
 🧪 Tests:
 * Ensure baseURL works
 * Mocks usable for testing hooks
-
-
-
-
-
-
-
-
-
