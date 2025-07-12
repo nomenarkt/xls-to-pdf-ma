@@ -13,10 +13,12 @@ export const FlightTable: React.FC<FlightTableProps> = ({ rows, onChange }) => {
     onValid: (val: number) => void;
     label: string;
   }> = ({ value, onValid, label }) => {
-    const { value: val, error, handleChange, handleBlur } = useSeatClassInput(
-      value,
-      onValid,
-    );
+    const {
+      value: val,
+      error,
+      handleChange,
+      handleBlur,
+    } = useSeatClassInput(value, onValid);
     return (
       <div>
         <input

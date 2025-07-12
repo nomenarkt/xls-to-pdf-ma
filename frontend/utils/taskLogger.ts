@@ -64,11 +64,9 @@ async function cleanBacklog(): Promise<void> {
   const doneNormalized = new Set<string>();
   for (const name of doneTasks) {
     doneNormalized.add(name);
-    if (name.includes("–")) {
-      const trimmed = name.split("–", 1)[0].trim();
-      if (trimmed) {
-        doneNormalized.add(trimmed);
-      }
+    const trimmed = name.split(/[\u2013-]/, 1)[0].trim();
+    if (trimmed && trimmed !== name) {
+      doneNormalized.add(trimmed);
     }
   }
   const backlogPath = path.join(BASE_DIR, BACKLOG_FILE);
@@ -108,7 +106,12 @@ async function parseDoneTasks(): Promise<Set<string>> {
       const fields = line.split("|").map((f) => f.trim());
       if (fields.length < 7) continue;
       if (fields[3] === "✅ Done") {
-        tasks.add(fields[1]);
+        const name = fields[1];
+        tasks.add(name);
+        const trimmed = name.split(/[\u2013-]/, 1)[0].trim();
+        if (trimmed && trimmed !== name) {
+          tasks.add(trimmed);
+        }
       }
     }
   } catch {

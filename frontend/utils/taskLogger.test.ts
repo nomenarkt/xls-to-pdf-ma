@@ -53,6 +53,20 @@ test("cleanBacklog removes prefixed tasks", async () => {
   expect(backlog.trim()).toBe("");
 });
 
+test("cleanBacklog removes tasks when tracker uses hyphen", async () => {
+  const backlogPath = path.join(tmp, "frontend", "backlog.md");
+  fs.writeFileSync(backlogPath, "### Codex Task: Hyphen\n");
+  await updateTaskTracker({
+    taskName: "Hyphen-Subtask",
+    layers: "context",
+    status: "✅ Done",
+    assignedTo: "Codex",
+    notes: "",
+  });
+  const backlog = fs.readFileSync(backlogPath, "utf8");
+  expect(backlog.trim()).toBe("");
+});
+
 test("updates existing row when task is logged twice", async () => {
   const logPath = path.join(tmp, "codex_task_tracker.md");
   jest.useFakeTimers().setSystemTime(new Date("2025-01-01"));
