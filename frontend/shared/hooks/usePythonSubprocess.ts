@@ -60,8 +60,15 @@ export function usePythonSubprocess() {
         }
         try {
           const text = await readFile(outputFile, "utf8");
-          const data = JSON.parse(text) as FlightRow[];
-          resolve(data);
+          try {
+            const data = JSON.parse(text) as FlightRow[];
+            resolve(data);
+          } catch {
+            const message = stderr.trim()
+              ? stderr.trim()
+              : "Invalid JSON output from Python process";
+            reject(new Error(message));
+          }
         } catch (err) {
           reject(err);
         }
