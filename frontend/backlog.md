@@ -1,6 +1,6 @@
 # 🧩 Frontend Feature Backlog
 
-💻 Codex Task: Hook – usePythonSubprocess
+### 💻 Codex Task: Hook – usePythonSubprocess
 🧭 Context: frontend | shared
 📁 Platform: shared
 🎯 Objective: Spawn a backend Python subprocess with typed arguments and capture its structured output.
