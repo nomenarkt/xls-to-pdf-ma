@@ -30,3 +30,4 @@
 | Normalize backlog cleanup hyphen                            | context   | ✅ Done    | shared      | handle hyphen names in cleanup                         | 2025-07-12  | 2025-07-12  |
 | Document environment variables (.env.sample)                | docs      | ✅ Done    | frontend    | added env sample and README steps                      | 2025-07-12  | 2025-07-12  |
 | Hook – usePythonSubprocess                                  | hooks     | ✅ Done    | frontend    | spawn Python subprocess with typed args                | 2025-07-12  | 2025-07-12  |
+| Extend usePythonSubprocess.test error cases                 | hooks     | ✅ Done    | frontend    | add error and signal rejection tests                  | 2025-07-12  | 2025-07-12  |

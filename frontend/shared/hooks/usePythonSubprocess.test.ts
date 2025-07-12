@@ -137,4 +137,45 @@ describe("usePythonSubprocess", () => {
       }),
     ).rejects.toThrow("Invalid category");
   });
+
+  it("rejects when child emits error without unhandled rejection", async () => {
+    const child = createChild();
+    spawnMock.mockReturnValue(child);
+    const run = usePythonSubprocess();
+    const unhandled: unknown[] = [];
+    const handler = (err: unknown) => {
+      unhandled.push(err);
+    };
+    process.on("unhandledRejection", handler);
+    const err = new Error("boom");
+    const promise = run("in.xls", "out.json", {
+      mode: Mode.COMMANDES,
+      category: Category.SALON,
+    });
+    child.emit("error", err);
+    await expect(promise).rejects.toBe(err);
+    await new Promise(process.nextTick);
+    expect(unhandled).toHaveLength(0);
+    process.off("unhandledRejection", handler);
+  });
+
+  it("rejects when child closes with a signal", async () => {
+    const child = createChild();
+    spawnMock.mockReturnValue(child);
+    const run = usePythonSubprocess();
+    const unhandled: unknown[] = [];
+    const handler = (err: unknown) => {
+      unhandled.push(err);
+    };
+    process.on("unhandledRejection", handler);
+    const promise = run("in.xls", "out.json", {
+      mode: Mode.COMMANDES,
+      category: Category.SALON,
+    });
+    child.emit("close", null, "SIGTERM");
+    await expect(promise).rejects.toThrow("Process exited with code null");
+    await new Promise(process.nextTick);
+    expect(unhandled).toHaveLength(0);
+    process.off("unhandledRejection", handler);
+  });
 });
