@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { ModeSelector, Mode, Category } from "./ModeSelector";
 import { UploadBox } from "./UploadBox";
@@ -79,10 +80,14 @@ test("ipc flow renders rows", async () => {
   spawnMock.mockReturnValue(child);
   readFileMock.mockResolvedValue(JSON.stringify(rows));
   render(<TestScreen />);
-  fireEvent.click(screen.getByRole("button", { name: /Commandes Définitives/i }));
-  fireEvent.click(screen.getByRole("button", { name: /Prestations à Bord/i }));
+  await userEvent.click(
+    screen.getByRole("button", { name: /Commandes Définitives/i }),
+  );
+  await userEvent.click(
+    screen.getByRole("button", { name: /Prestations à Bord/i }),
+  );
   const input = screen.getByTestId("file-input");
-  fireEvent.change(input, { target: { files: [createFile("test.xls")] } });
+  await userEvent.upload(input, createFile("test.xls"));
   child.emit("close", 0);
   await waitFor(() => {
     expect(screen.getByText("AF1")).toBeInTheDocument();

@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import axios from "../shared/api/axios";
 import { ModeSelector, Mode, Category } from "./ModeSelector";
@@ -66,12 +67,14 @@ const TestScreen: React.FC = () => {
 test("valid flow renders rows", async () => {
   mockedPost.mockResolvedValue({ status: 200, data: rows });
   render(<TestScreen />);
-  fireEvent.click(
+  await userEvent.click(
     screen.getByRole("button", { name: /Commandes Définitives/i }),
   );
-  fireEvent.click(screen.getByRole("button", { name: /Prestations à Bord/i }));
+  await userEvent.click(
+    screen.getByRole("button", { name: /Prestations à Bord/i }),
+  );
   const input = screen.getByTestId("file-input");
-  fireEvent.change(input, { target: { files: [createFile("test.xls")] } });
+  await userEvent.upload(input, createFile("test.xls"));
   await waitFor(() => {
     expect(screen.getByText("AF1")).toBeInTheDocument();
   });
@@ -82,7 +85,7 @@ test("error response shows fallback", async () => {
   mockedPost.mockRejectedValue(new Error("bad"));
   render(<TestScreen />);
   const input = screen.getByTestId("file-input");
-  fireEvent.change(input, { target: { files: [createFile("test.xls")] } });
+  await userEvent.upload(input, createFile("test.xls"));
   await waitFor(() => {
     expect(screen.getByRole("alert")).toBeInTheDocument();
   });

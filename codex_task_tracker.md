@@ -33,3 +33,4 @@
 | Extend usePythonSubprocess.test error cases                 | hooks     | ✅ Done    | frontend    | add error and signal rejection tests                  | 2025-07-12  | 2025-07-12  |
 | usePythonSubprocess JSDoc outputFile | hooks                     | ✅ Done        | frontend    | document JSON FlightRow array requirement | 2025-07-12 | 2025-07-12 |
 | Python error helper       | hooks                     | ✅ Done        | Codex       | improve subprocess error messages | 2025-07-12 | 2025-07-12 |
+| UserEvent migration       | ui                        | ✅ Done        | frontend    | replace fireEvent with userEvent | 2025-07-12 | 2025-07-12 |
