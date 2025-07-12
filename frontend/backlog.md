@@ -1,4 +1,24 @@
 # 🧩 Frontend Feature Backlog
+-------------------------------
+
+### 💻 Codex Task: Improve subprocess error surfacing for UI
+🧭 Context: shared
+📁 Platform: shared
+🎯 Objective: Refine how errors from the Python subprocess are surfaced to the UI, improving user clarity and consistency with other schema validation flows.
+🧩 Specs:
+- Create a `ZodErrorAdapter` or compatible transformer that maps `buildPythonErrorMessage()` output into a structured, UI-safe error (title, description, optional stderr).
+- Extend `usePythonSubprocess.ts` to:
+  - Include a `debugMode` flag (default: false)
+  - Conditionally include `stderr` output in the returned error only if `debugMode === true`
+  - Default UI error to show high-level context message only (e.g., `"Failed to parse XLS – please check file format"`).
+- Add dev comment where stderr is stripped, so debuggers know how to enable.
+
+🧪 Tests:
+- Mock subprocess responses with and without `stderr`, in both debug/normal mode
+- Confirm UI surface only includes `stderr` if debug enabled
+- Validate adapter works with `ZodError`, `SyntaxError`, and generic fallback
+
+-------------------------------
 
 ### 💻 Codex Task: IPC Bridge - usePythonSubprocess()
 🧭 Context: frontend
