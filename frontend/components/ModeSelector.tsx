@@ -1,7 +1,16 @@
 import React from "react";
 
-export type Mode = "precommandes" | "commandes";
-export type Category = "salon" | "prestations";
+export const Mode = {
+  PRECOMMANDES: "precommandes",
+  COMMANDES: "commandes",
+} as const;
+export type Mode = (typeof Mode)[keyof typeof Mode];
+
+export const Category = {
+  SALON: "salon",
+  PRESTATIONS: "prestations",
+} as const;
+export type Category = (typeof Category)[keyof typeof Category];
 
 export interface ModeSelectorProps {
   mode: Mode;
@@ -35,15 +44,15 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
       <div role="group" aria-label="mode" className="flex space-x-2 mb-2">
         <button
           type="button"
-          className={`${base} ${mode === "precommandes" ? active : inactive}`}
-          onClick={handleMode("precommandes")}
+          className={`${base} ${mode === Mode.PRECOMMANDES ? active : inactive}`}
+          onClick={handleMode(Mode.PRECOMMANDES)}
         >
           Pré-commandes
         </button>
         <button
           type="button"
-          className={`${base} ${mode === "commandes" ? active : inactive}`}
-          onClick={handleMode("commandes")}
+          className={`${base} ${mode === Mode.COMMANDES ? active : inactive}`}
+          onClick={handleMode(Mode.COMMANDES)}
         >
           Commandes Définitives
         </button>
@@ -51,15 +60,15 @@ export const ModeSelector: React.FC<ModeSelectorProps> = ({
       <div role="group" aria-label="category" className="flex space-x-2">
         <button
           type="button"
-          className={`${base} ${category === "salon" ? active : inactive}`}
-          onClick={handleCategory("salon")}
+          className={`${base} ${category === Category.SALON ? active : inactive}`}
+          onClick={handleCategory(Category.SALON)}
         >
           Salon
         </button>
         <button
           type="button"
-          className={`${base} ${category === "prestations" ? active : inactive}`}
-          onClick={handleCategory("prestations")}
+          className={`${base} ${category === Category.PRESTATIONS ? active : inactive}`}
+          onClick={handleCategory(Category.PRESTATIONS)}
         >
           Prestations à Bord
         </button>
