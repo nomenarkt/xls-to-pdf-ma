@@ -27,3 +27,4 @@
 | IPC Bridge Documentation                                    | docs      | ✅ Done    | frontend    | PRD + TECH_SPEC for Python subprocess bridge           | 2025-07-12  | 2025-07-12  |
 | Update useProcessXLS types                                  | hooks     | ✅ Done    | frontend    | update hook to use Mode and Category types             | 2025-07-12  | 2025-07-12  |
 | Add runtime validation to useProcessXLS                     | hooks     | ✅ Done    | frontend    | runtime checks for Mode/Category enums                 | 2025-07-12  | 2025-07-12  |
+| Document environment variables (.env.sample)               | docs      | ✅ Done    | frontend    | added env sample and README steps                     | 2025-07-12  | 2025-07-12  |
