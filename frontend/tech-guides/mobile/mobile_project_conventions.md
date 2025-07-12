@@ -1,6 +1,6 @@
 # /tech-guides/mobile.md – Mobile Frontend Tech Guide
 
-This guide defines how to build robust and testable mobile frontends across multiple frameworks. It complements the immutable `/frontend/AGENT.md` and is governed by architectural principles from `/frontend/ARCHITECT.md`.
+This guide defines how to build robust and testable mobile frontends across multiple frameworks. It complements the immutable `/frontend/AGENT.md` and is governed by architectural principles from `/frontend/tech-guides/README.md`.
 
 ## ✅ Supported Frameworks
 
@@ -116,5 +116,5 @@ All implementations live under `/frontend/mobile/` and follow platform-agnostic 
 
 ---
 
-Always consult [`/frontend/AGENT.md`](../frontend/AGENT.md) for shared constraints and task protocols, and [`/frontend/ARCHITECT.md`](../frontend/ARCHITECT.md) for stack-specific architectural strategy.
+Always consult [`/frontend/AGENT.md`](../frontend/AGENT.md) for shared constraints and task protocols, and [`/frontend/tech-guides/ARCHITECT.md`](../frontend/ARCHITECT.md) for stack-specific architectural strategy.
 
