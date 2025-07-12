@@ -23,3 +23,4 @@
 | Rewrite duplicates in updateTaskTracker                     | context   | ✅ Done    | frontend    | rewrite duplicate rows and add tests                   | 2025-07-11  | 2025-07-11  |
 | Extend FlightRow with seat classes                          | shared    | ✅ Done    | frontend    | add j_class and y_class fields; update tests           | 2025-07-12  | 2025-07-12  |
 | Table Renderer – FlightTable                                | ui        | ✅ Done    | frontend    | implement table component                              | 2025-07-12  | 2025-07-12  |
+| Seat Class Validation - FlightTable | ui                        | ✅ Done        | frontend    | j/y class validation 0-99 with error state | 2025-07-12 | 2025-07-12 |

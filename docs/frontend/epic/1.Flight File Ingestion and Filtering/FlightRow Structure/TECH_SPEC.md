@@ -20,7 +20,13 @@ export interface FlightRow {
 ```
 
 `num_vol`, `depart`, `arrivee`, `imma`, `sd_loc`, and `sa_loc` are read‑only columns.
-Only `j_class` and `y_class` are editable numeric inputs that default to `0`.
+Only `j_class` and `y_class` are editable. These fields use `<input type="number">` with the following validation rules:
+
+- `min` **0**
+- `max` **99**
+- `step` **1** (whole numbers only)
+
+Typing letters or decimals is blocked. Values below `0`, above `99`, or empty trigger a red border and accessible error label. The table does not propagate changes until the value is corrected.
 
 ---
 

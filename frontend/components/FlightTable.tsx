@@ -1,5 +1,6 @@
 import React from "react";
 import { FlightRow } from "../shared/types/flight";
+import { useSeatClassInput } from "../shared/hooks/useSeatClassInput";
 
 export interface FlightTableProps {
   rows: FlightRow[];
@@ -7,13 +8,36 @@ export interface FlightTableProps {
 }
 
 export const FlightTable: React.FC<FlightTableProps> = ({ rows, onChange }) => {
-  const handleNumberChange =
-    (field: "j_class" | "y_class", row: FlightRow) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = parseInt(e.target.value, 10);
-      const safeValue = Number.isNaN(value) ? 0 : value;
-      onChange({ ...row, [field]: safeValue });
-    };
+  const SeatInput: React.FC<{
+    value: number;
+    onValid: (val: number) => void;
+    label: string;
+  }> = ({ value, onValid, label }) => {
+    const { value: val, error, handleChange, handleBlur } = useSeatClassInput(
+      value,
+      onValid,
+    );
+    return (
+      <div>
+        <input
+          type="number"
+          min={0}
+          max={99}
+          step={1}
+          aria-label={label}
+          className={`w-20 border rounded px-1 ${error ? "border-red-500" : ""}`}
+          value={val}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        {error && (
+          <span role="alert" className="text-red-600 text-xs">
+            Invalid
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="overflow-y-auto max-h-96">
@@ -40,19 +64,17 @@ export const FlightTable: React.FC<FlightTableProps> = ({ rows, onChange }) => {
               <td className="px-2 py-1">{r.sd_loc}</td>
               <td className="px-2 py-1">{r.sa_loc}</td>
               <td className="px-2 py-1">
-                <input
-                  type="number"
-                  className="w-20 border rounded px-1"
+                <SeatInput
                   value={r.j_class ?? 0}
-                  onChange={handleNumberChange("j_class", r)}
+                  onValid={(val) => onChange({ ...r, j_class: val })}
+                  label={`J class for ${r.num_vol}`}
                 />
               </td>
               <td className="px-2 py-1">
-                <input
-                  type="number"
-                  className="w-20 border rounded px-1"
+                <SeatInput
                   value={r.y_class ?? 0}
-                  onChange={handleNumberChange("y_class", r)}
+                  onValid={(val) => onChange({ ...r, y_class: val })}
+                  label={`Y class for ${r.num_vol}`}
                 />
               </td>
             </tr>
