@@ -88,7 +88,23 @@ describe("usePythonSubprocess", () => {
       category: Category.SALON,
     });
     child.emit("close", 0);
-    await expect(promise).rejects.toThrow();
+    await expect(promise).rejects.toThrow(
+      "Invalid JSON output from Python process",
+    );
+  });
+
+  it("uses stderr when JSON parse fails", async () => {
+    const child = createChild();
+    spawnMock.mockReturnValue(child);
+    readFileMock.mockResolvedValue("not json");
+    const run = usePythonSubprocess();
+    const promise = run("in.xls", "out.json", {
+      mode: Mode.COMMANDES,
+      category: Category.SALON,
+    });
+    child.stderr.emit("data", "parse error");
+    child.emit("close", 0);
+    await expect(promise).rejects.toThrow("parse error");
   });
 
   it("rejects on timeout", async () => {
@@ -109,10 +125,16 @@ describe("usePythonSubprocess", () => {
   it("validates mode and category", async () => {
     const run = usePythonSubprocess();
     await expect(
-      run("in.xls", "out.json", { mode: "bad" as Mode, category: Category.SALON })
+      run("in.xls", "out.json", {
+        mode: "bad" as Mode,
+        category: Category.SALON,
+      }),
     ).rejects.toThrow("Invalid mode");
     await expect(
-      run("in.xls", "out.json", { mode: Mode.COMMANDES, category: "bad" as Category })
+      run("in.xls", "out.json", {
+        mode: Mode.COMMANDES,
+        category: "bad" as Category,
+      }),
     ).rejects.toThrow("Invalid category");
   });
 });

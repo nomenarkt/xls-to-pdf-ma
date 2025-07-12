@@ -27,6 +27,6 @@
 | IPC Bridge Documentation                                    | docs      | ✅ Done    | frontend    | PRD + TECH_SPEC for Python subprocess bridge           | 2025-07-12  | 2025-07-12  |
 | Update useProcessXLS types                                  | hooks     | ✅ Done    | frontend    | update hook to use Mode and Category types             | 2025-07-12  | 2025-07-12  |
 | Add runtime validation to useProcessXLS                     | hooks     | ✅ Done    | frontend    | runtime checks for Mode/Category enums                 | 2025-07-12  | 2025-07-12  |
-| Normalize backlog cleanup hyphen                           | context   | ✅ Done    | shared     | handle hyphen names in cleanup                         | 2025-07-12  | 2025-07-12  |
-| Document environment variables (.env.sample)               | docs      | ✅ Done    | frontend    | added env sample and README steps                     | 2025-07-12  | 2025-07-12  |
-| Hook – usePythonSubprocess                                  | hooks     | ⏳ In Progress | frontend    | spawn Python subprocess with typed args              | 2025-07-12  | 2025-07-12  |
+| Normalize backlog cleanup hyphen                            | context   | ✅ Done    | shared      | handle hyphen names in cleanup                         | 2025-07-12  | 2025-07-12  |
+| Document environment variables (.env.sample)                | docs      | ✅ Done    | frontend    | added env sample and README steps                      | 2025-07-12  | 2025-07-12  |
+| Hook – usePythonSubprocess                                  | hooks     | ✅ Done    | frontend    | spawn Python subprocess with typed args                | 2025-07-12  | 2025-07-12  |
