@@ -123,6 +123,9 @@ def parse_done_tasks() -> set[str]:
             status = fields[3]
             if status == "✅ Done":
                 tasks.add(name)
+                trimmed = re.split(r"[\u2013-]", name, 1)[0].strip()
+                if trimmed and trimmed != name:
+                    tasks.add(trimmed)
     return tasks
 
 
@@ -134,10 +137,9 @@ def clean_backlog() -> None:
     done_normalized: set[str] = set()
     for name in done:
         done_normalized.add(name)
-        if "–" in name:
-            trimmed = name.split("–", 1)[0].strip()
-            if trimmed:
-                done_normalized.add(trimmed)
+        trimmed = re.split(r"[\u2013-]", name, 1)[0].strip()
+        if trimmed and trimmed != name:
+            done_normalized.add(trimmed)
 
     backlog_path = base / BACKLOG_FILE
     if not backlog_path.exists():

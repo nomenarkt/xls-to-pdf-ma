@@ -40,6 +40,7 @@ def _setup_files(tmp_path: Path) -> None:
         "cleanup_done",
         "missing_files",
         "prefix_behavior",
+        "hyphen_cleanup",
     ],
 )
 def test_task_logger(tmp_path: Path, scenario: str) -> None:
@@ -113,5 +114,17 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
         )
         content = (tmp_path / "codex_task_tracker.md").read_text()
         assert "Parent – Child" in content
+
+    elif scenario == "hyphen_cleanup":
+        backlog = tmp_path / "backend" / "backlog.md"
+        backlog.write_text("### Codex Task: Hyphen\n")
+        tl.update_task_tracker(
+            "Hyphen-Child",
+            "context",
+            "✅ Done",
+            "Codex",
+            "notes",
+        )
+        assert backlog.read_text().strip() == ""
 
     tl.BASE_DIR = ""
