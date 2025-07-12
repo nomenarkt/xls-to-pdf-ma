@@ -9,7 +9,16 @@ export interface PythonFilters {
 }
 
 /**
- * Launches the Python processing script with filters and returns parsed rows.
+ * Launches the Python processing script with the given filters and parses the
+ * resulting data.
+ *
+ * `outputFile` must contain a JSON array of {@link FlightRow} objects in the
+ * following shape:
+ * `num_vol`, `depart`, `arrivee`, `imma`, `sd_loc`, `sa_loc`, `j_class`,
+ * `y_class`.
+ *
+ * For the full structure see
+ * `/docs/frontend/epic/1.Flight File Ingestion and Filtering/IPC Bridge/TECH_SPEC.md`.
  */
 export function usePythonSubprocess() {
   return async (
