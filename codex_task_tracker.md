@@ -40,3 +40,4 @@
 | backend | FlightRow domain model | domain | ✅ Done | domain | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement FlightRow model and refactor layers | pass | 2025-07-13 | 2025-07-13 |
 | backend | Sorting and pairing logic | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement leg pairing sort & return FlightRow | pass | 2025-07-13 | 2025-07-13 |
 | backend | Annotate process route | delivery | ✅ Done | delivery | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | add OpenAPI response model, summary, description | pass | 2025-07-13 | 2025-07-13 |
+| backend | Replace openpyxl writer in tests | tests | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | use xlwt writer; assert jc/yc defaults | pass | 2025-07-13 | 2025-07-13 |

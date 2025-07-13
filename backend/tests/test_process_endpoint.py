@@ -4,10 +4,10 @@ import sys
 from datetime import date, datetime
 from importlib import util
 from io import BytesIO
+import xlwt
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
 import pytest
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
@@ -26,11 +26,24 @@ app.include_router(router)
 
 
 def _make_xls(rows: list[dict]) -> BytesIO:
-    df = pd.DataFrame(rows)
-    buf = BytesIO()
-    df.to_excel(buf, index=False, engine="openpyxl")
-    buf.seek(0)
-    return buf
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet("Sheet1")
+    if rows:
+        headers = list(rows[0].keys())
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header)
+        date_style = xlwt.easyxf(num_format_str="YYYY-MM-DD HH:MM:SS")
+        for row_index, row in enumerate(rows, 1):
+            for col_index, header in enumerate(headers):
+                value = row.get(header)
+                if isinstance(value, datetime):
+                    sheet.write(row_index, col_index, value, date_style)
+                else:
+                    sheet.write(row_index, col_index, value)
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+    return buffer
 
 
 @pytest.mark.asyncio

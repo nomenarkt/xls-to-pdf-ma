@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import date, datetime
 from importlib import util
 from io import BytesIO
+import xlwt
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
 import pytest
 
 from backend.domain import FlightRow
@@ -20,11 +20,24 @@ parse_and_filter_xls = xls_parser.parse_and_filter_xls
 
 
 def _make_xls(rows: list[dict]) -> BytesIO:
-    df = pd.DataFrame(rows)
-    buf = BytesIO()
-    df.to_excel(buf, index=False, engine="openpyxl")
-    buf.seek(0)
-    return buf
+    workbook = xlwt.Workbook()
+    sheet = workbook.add_sheet("Sheet1")
+    if rows:
+        headers = list(rows[0].keys())
+        for col, header in enumerate(headers):
+            sheet.write(0, col, header)
+        date_style = xlwt.easyxf(num_format_str="YYYY-MM-DD HH:MM:SS")
+        for row_index, row in enumerate(rows, 1):
+            for col_index, header in enumerate(headers):
+                value = row.get(header)
+                if isinstance(value, datetime):
+                    sheet.write(row_index, col_index, value, date_style)
+                else:
+                    sheet.write(row_index, col_index, value)
+    buffer = BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+    return buffer
 
 
 def test_parse_commandes() -> None:
@@ -52,6 +65,8 @@ def test_parse_commandes() -> None:
     assert len(result) == 1
     assert isinstance(result[0], FlightRow)
     assert result[0].num_vol == "AF1"
+    assert result[0].jc == 0
+    assert result[0].yc == 0
 
 
 def test_parse_precommandes() -> None:
@@ -79,6 +94,8 @@ def test_parse_precommandes() -> None:
     assert len(result) == 1
     assert isinstance(result[0], FlightRow)
     assert result[0].num_vol == "AF2"
+    assert result[0].jc == 0
+    assert result[0].yc == 0
 
 
 def test_missing_column_error() -> None:
@@ -138,3 +155,4 @@ def test_pairing_sort_order() -> None:
     result = parse_and_filter_xls(file_obj, "commandes", today)
     order = [r.num_vol for r in result]
     assert order == ["MD100", "MD101", "MD200", "MD201"]
+    assert all(r.jc == 0 and r.yc == 0 for r in result)
