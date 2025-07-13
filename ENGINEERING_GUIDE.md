@@ -1,4 +1,4 @@
-# ENGINEERING\_GUIDE.md – Codex + GPT System Guide
+# ENGINEERING_GUIDE.md – Codex + GPT System Guide
 
 Welcome to your Codex-enabled, AI-driven SaaS engineering system. This guide defines how The Architect (backend GPT), The Polyglot (frontend GPT), and Codex collaborate through specs, tasks, and traceable implementation.
 
@@ -9,72 +9,66 @@ Welcome to your Codex-enabled, AI-driven SaaS engineering system. This guide def
 | Role          | Domain    | Responsibilities                                                            |
 | ------------- | --------- | --------------------------------------------------------------------------- |
 | The Architect | Backend   | Owns backend specs, layering, testing, and implementation guidance          |
-| The Polyglot  | Frontend  | Owns component design, platform-specific rules, UI/UX specs                 |
-| Codex         | Fullstack | Executes production-ready, test-covered implementations per scoped GPT task |
+| The Polyglot  | Frontend  | Owns UI architecture, task specs, platform rules, testing, and data flow    |
+| Codex         | Fullstack | Executes production-grade, test-covered implementations per GPT spec        |
 
 ---
 
 ## 📁 Repository Overview
 
 ```
-/backend                        → Clean Architecture backend stack
-  /delivery                     → HTTP handlers (routes, request parsing)
-  /usecase                      → Business logic (pure functions, orchestration)
-  /repository                   → DB and external integrations
-  /domain                       → Optional core types
-  /internal
-    /context                    → GPT state tools (e.g., task_logger.go)
-    /infrastructure             → Shared config loaders (e.g., env.go)
-  /tech-guides/                 → Language-specific and domain guides
-  AGENT.md                      → Codex rules for backend
-  backlog.md                    → Pending backend tasks
+/backend
+├── AGENT.md                     → Immutable Codex contract for backend
+├── backlog.md                   → Pending backend tasks
+├── delivery/                   → HTTP handlers (entrypoint layer)
+├── usecase/                    → Pure business logic orchestration
+├── repository/                 → DB or external API ports
+├── domain/                     → Core types or entities (optional)
+├── internal/context/           → Task logger and GPT state utilities
+├── internal/infrastructure/    → Env/config/runtime utilities
+├── tech-guides/                → Conventions per language or domain
+├── tests/                      → Unit + integration test suites
 
-/frontend                       → Component-driven frontend stack
-  /web                          → Web UI (Next.js, Tailwind, etc.)
-  /mobile                       → Mobile UI (React Native, etc.)
-  /shared                       → Shared hooks, types, schemas, forms
-  /tech-guides/                 → Platform + design execution guides
-  AGENT.md                      → Codex rules for frontend
-  backlog.md                    → Pending UI tasks
+/frontend
+├── AGENT.md                     → Immutable Codex contract for frontend
+├── backlog.md                   → Pending UI tasks
+├── web/                         → Web UI (Next.js, Tailwind)
+├── mobile/                      → Mobile UI (React Native, Dripsy)
+├── shared/                      → Shared logic: hooks, schemas, forms
+├── tech-guides/                 → Web/mobile/shared-specific guides
 
-/docs/                          → Functional + technical specs (epic + feature)
-  /frontend/epic/{EPIC_NAME}/...
-  /backend/epic/{EPIC_NAME}/...
+/docs/
+├── backend/<domain>/<module>/  → [PRD.md, TECH_SPEC.backend.md]
+├── frontend/<domain>/<module>/ → TECH_SPEC.frontend.md
+├── functional_spec.md          → Strategic vision
+├── shared/api-contracts.md     → API schemas + IO mapping
 
-/.github/workflows/             → Lint/test/CI pipelines
 /codex_task_tracker.md          → Codex’s unified task ledger
-/AGENTS.md                      → Global pre-PR & spec-routing rules
-/ENGINEERING_GUIDE.md          → This file (GPT–Codex–User system doc)
+/AGENTS.md                      → Global rules for Codex before PR
+/ENGINEERING_GUIDE.md          → This file (system-wide collaboration doc)
+/.github/workflows/             → Format, lint, test, CI/CD
 ```
 
 ---
 
 ## 🔁 Codex Memory and Task Sync
 
-All GPT-generated tasks are tracked using:
+Codex must always:
 
-* `backlog.md` (planned)
-* `codex_task_tracker.md` (completed, in progress)
-
-Codex must:
-
-* Log each task outcome using the backend or frontend logger utility
-* Match `task_tracker` entry titles with original backlog prefix
-* Call `CleanBacklog()` to remove fulfilled backlog tasks
+* Update task entries in `codex_task_tracker.md`
+* Match `Task Title` to original backlog
+* Use `task_logger.go` or `taskLogger.ts` depending on domain
+* Clear fulfilled tasks via `CleanBacklog()`
 
 ### 📍 Logger Utilities
 
-**Backend:** `/backend/internal/context/task_logger.go`
-
-* `UpdateTaskTracker()` – Upserts status and metadata
-* `hasDuplicateTask()` – Prevents redundant entries
-* `CleanBacklog()` – Prunes backlog
-
+**Backend:** `/backend/internal/context/task_logger.go`  
 **Frontend:** `/frontend/utils/taskLogger.ts`
 
-* `updateTaskTracker()` – Same behavior
-* `hasDuplicateTask()`
-* `cleanBacklog()`
+Functions:
+- `updateTaskTracker()`
+- `hasDuplicateTask()`
+- `cleanBacklog()`
 
 ---
 
@@ -93,61 +87,130 @@ cd frontend/mobile && npx expo test
 
 All commits must pass:
 
-* ✅ Code formatters
-* ✅ Linters
-* ✅ Unit + integration tests
-* ✅ CI checks
+* ✅ Formatter
+* ✅ Linter
+* ✅ Unit & integration tests
+* ✅ CI pipeline checks
 
-Minimum test coverage: **90%**.
+> Minimum coverage: **90%**
 
 ---
 
-## 📦 Codex Task Format (Per Domain)
+## 📦 Codex Task Format
 
-### 🔧 Backend
+### 🔧 Backend Task Spec
+💻 Codex Task: /generatePDF endpoint
+🗭 Context: backend
+📁 Layer: usecase
+🎯 Objective: Generate PDF from filtered Excel data
+🧱 Module: PDFExport, FlightLogs
+📚 Epic: Report Generation
+🧹 Feature: Download Filtered Flight Logs
+🪹 Specs:
+Input:
 
-See `/backend/AGENT.md` for:
+* rows: FlightRow\[]
+* category: "salon" | "prestations"
+  Validation:
+* rows must be array
+* category is required
+  Flow:
+* sanitize
+* sort
+* layout
+* return file
+  Response:
+* 200 OK
+* PDF (binary)
 
-* Clean Architecture layering
-* Mandatory test types
-* API format and validation rules
-* Role-based JWT handling
-* Platform-specific conventions from `/tech-guides/languages/{language}.md`
+🥪 Tests:
 
-### 🖼️ Frontend
+* Valid input returns a PDF
+* Missing input returns 400
+* Edge case layouts render correctly
 
-See `/frontend/AGENT.md` for:
+📀 Rules:
 
-* Component/task specs
-* Layering flow (UI → form/hook → API → schema)
-* Zod + RHF + testing rules
-* Design system enforcement (e.g., Tailwind, Dripsy)
-* Runtime rules in `/tech-guides/{web|mobile|shared}/*`
+* Follow AGENT.md
+* Respect backend\_conventions.md
+* Include unit + integration tests
+* Use interfaces + dependency injection
+* Never bypass usecase → repository flow
+
+⛔ Anti-patterns:
+
+* No repeated logic
+* No skipped validation
+* No commented-out or untested code
+* No AGENT.md modifications
+
+See `/backend/AGENT.md` and `tech-guides/languages/{language}.md` for details.
+
+### 🖼️ Frontend Task Spec
+💻 Codex Task: \[Component / Screen / Hook / Utility]
+🗬 Context: frontend | shared
+📁 Platform: web | mobile | shared | vue | angular | svelte
+🎯 Objective: What the feature does or enables
+🧱 Module: \[e.g. BillingForm]
+📦 Epic: \[e.g. Payments Infrastructure]
+🔧 Feature: \[e.g. Checkout Flow]
+🧲 Specs:
+
+* Props / Inputs: \[...]
+* UI Design: Tailwind / Dripsy / native / scoped CSS
+* Behavior: \[...]
+* Validation: Zod / Yup schema
+* Data: API hook / props / context
+* Routing: \[...] (if applicable)
+
+🧪 Tests:
+
+* Validate all props and edge cases
+* Simulate interactions (click, tap, swipe)
+* Confirm correct fetch/mutate/navigation
+
+See `/frontend/AGENT.md` and `tech-guides/web|mobile|shared/*` for details.
 
 ---
 
 ## 📖 Feature Spec Source of Truth
 
-All implementation MUST trace to specs under:
+All Codex tasks must trace to approved specs in:
 
 ```
-/docs/{frontend|backend}/epic/{EPIC_NAME}/{FEATURE}/[PRD.md, TECH_SPEC.md]
-/docs/{frontend|backend}/epic/{EPIC_NAME}/[PRD.md, TECH_SPEC.md]
+/docs/backend/<domain>/<module>/PRD.md
+/docs/backend/<domain>/<module>/TECH_SPEC.backend.md
+/docs/frontend/<domain>/<module>/TECH_SPEC.frontend.md
 ```
 
-Use `/AGENTS.md` to route Codex behavior and `/functional_spec.md` to align strategic priorities.
+Codex must never generate or implement unscoped features.
 
 ---
 
 ## 🧭 Vision Alignment
 
-Codex must consult `/functional_spec.md` for project goals. If a task is ambiguous or seems out of scope:
+Codex and GPTs must consult:
 
-* ❗ Pause
-* ✅ Ask Architect or Polyglot GPT for clarification
-* 🛑 Never invent behavior, fields, or structure
+* `/functional_spec.md` → Product goals
+* `/AGENTS.md` → Global implementation rules
+* `/codex_task_tracker.md` → Status and trace
+
+Ambiguous or missing behavior?
+→ Pause and ask the appropriate GPT (Architect or Polyglot).
+→ Never assume logic, fields, or flows.
 
 ---
 
-This system enables full-stack AI software delivery with safety, quality, and clarity.
-All contributions are scoped, test-first, and layered by design.
+## 🧱 Docs Lifecycle Standard
+
+| Phase        | Docs Required                                      |
+| ------------ | -------------------------------------------------- |
+| Before Code  | PRD.md, TECH_SPEC.md (frontend/backend)            |
+| During Code  | API comments, OpenAPI stubs, unit test descriptions|
+| After Code   | Changelog, README                                  |
+| Persistent   | functional_spec.md, AGENT.md                    |
+
+---
+
+This is a zero-assumption engineering system.  
+Everything is documented, spec-driven, layered, and enforced.

@@ -36,6 +36,25 @@ These AGENT.md files are the **primary entry points** for backend and frontend i
 
 ---
 
+## 🧠 SDLC Phases
+
+```
+Idea → Architecture → UX → Sprints → Specs → TDD → Deployment
+```
+
+All specs (PRD and TECH_SPEC) must be written before implementation. Use Codex standard for documentation lifecycle.
+
+---
+
+## 🧱 Codex Enforcement Protocols
+
+* 🗂️ Track all tasks in `codex_task_tracker.md` with: Context, Task Title, Phase, Status, Layer, Domain, Module, Epic, Feature, Description, Test Status, Created, Updated
+* 📄 Never modify AGENT.md from within Codex
+* 🧾 Do not invent logic or routing — implement only what’s defined in `PRD.md` and `TECH_SPEC.md`
+* 🧪 Include test specs with all Codex tasks (unit, integration, or E2E if applicable)
+
+---
+
 ## 🛠 Commands (Generalized)
 
 | Scope | Task                   | Description                                                           |
@@ -47,122 +66,105 @@ These AGENT.md files are the **primary entry points** for backend and frontend i
 
 > 📘 For system-wide engineering workflows, task specs, and architecture rules, see [`ENGINEERING_GUIDE.md`](./ENGINEERING_GUIDE.md).
 
-> 💡 You must refer to `/backend/tech-guides/languages/{language}.md` or `/frontend/tech-guides/web/{framework}.md` or `/frontend/tech-guides/mobile/{framework}.md` to determine exact tools and conventions per domain. For shared rules (Zod, testing, accessibility), see `/frontend/tech-guides/shared/{area}.md`. A full index is provided in `/frontend/tech-guides/README.md` and `/backend/tech-guides/README.md`.
-
-## 📖 Codex-Required Tech Guides
-
-Codex MUST recursively scan all `.md` files inside the following directories:
-
-**Backend:**
-
-* `/backend/tech-guides/api/`
-* `/backend/tech-guides/architecture/`
-* `/backend/tech-guides/coding/`
-* `/backend/tech-guides/devops/`
-* `/backend/tech-guides/domain/`
-* `/backend/tech-guides/languages/`
-* `/backend/tech-guides/security/`
-* `/backend/tech-guides/serverless/`
-* `/backend/tech-guides/storage/`
-* `/backend/tech-guides/testing/`
-
-Codex must also read:
-
-* `/backend/tech-guides/backend_conventions.md`
-* `/backend/tech-guides/README.md`
-
-**Frontend:**
-
-* `/frontend/tech-guides/web/` (e.g. `react/`, `vue/`, `svelte/`, `angular/`, `nextjs/`)
-* `/frontend/tech-guides/mobile/` (e.g. `flutter/`, `react-native/`)
-* `/frontend/tech-guides/shared/` (e.g. `design/`, `typescript/`, `testing/`, `security/`, `performance/`, `fundamentals/`, `docs/`)
-
-Codex must also read:
-
-* `/frontend/tech-guides/frontend_conventions.md`
-* `/frontend/tech-guides/README.md`
-
-This structure enforces consistency while supporting extensibility.
-
-## 📁 Feature Spec Index Protocol
-
-All feature-level specifications must live under:
-
-```
-/docs/backend/epic/{EPIC_NAME}/{FEATURE}/[PRD.md, TECH_SPEC.md]
-```
-
-Each Epic must also include:
-
-```
-/docs/backend/epic/{EPIC_NAME}/PRD.md
-/docs/backend/epic/{EPIC_NAME}/TECH_SPEC.md
-```
-
-> 🧭 Codex Rule:
-> Before implementing any route, usecase, or repository logic, Codex MUST:
->
-> * Read `/docs/backend/epic/{EPIC_NAME}/PRD.md`
-> * Locate the feature under `{FEATURE}/PRD.md` and `TECH_SPEC.md`
-> * Follow the Clean Architecture flow from `delivery → usecase → repository`
-> * Match test expectations defined in the TECH\_SPEC.
+> 💡 Refer to `/backend/tech-guides/languages/{language}.md`, `/frontend/tech-guides/web/{framework}.md`, or `/frontend/tech-guides/mobile/{framework}.md` to determine exact tools and conventions. Shared rules (Zod, testing, accessibility, forms) live in `/frontend/tech-guides/shared/{area}.md`.
 
 ---
 
-📁 Feature Spec Index Protocol (Frontend)
+## 📖 Codex-Required Tech Guides
 
-All feature specifications for **frontend implementations** must reside under:
+Codex MUST recursively scan all `.md` files inside:
 
-```
-/docs/frontend/epic/{EPIC_NAME}/{FEATURE}/[PRD.md, TECH_SPEC.md]
-```
+**Backend:**
+- `/backend/tech-guides/api/`
+- `/backend/tech-guides/architecture/`
+- `/backend/tech-guides/coding/`
+- `/backend/tech-guides/devops/`
+- `/backend/tech-guides/domain/`
+- `/backend/tech-guides/languages/`
+- `/backend/tech-guides/security/`
+- `/backend/tech-guides/serverless/`
+- `/backend/tech-guides/storage/`
+- `/backend/tech-guides/testing/`
+- `/backend/tech-guides/backend_conventions.md`
+- `/backend/tech-guides/README.md`
 
-Each Epic MUST also include global specs:
+**Frontend:**
+- `/frontend/tech-guides/web/`
+- `/frontend/tech-guides/mobile/`
+- `/frontend/tech-guides/shared/`
+- `/frontend/tech-guides/frontend_conventions.md`
+- `/frontend/tech-guides/README.md`
 
-```
-/docs/frontend/epic/{EPIC_NAME}/PRD.md
-/docs/frontend/epic/{EPIC_NAME}/TECH_SPEC.md
-```
+---
 
-## 🧭 Codex Rule:
+## 📁 Documentation Directory Rules
 
-Before Codex implements any:
+Use the following conventions for all specs:
 
-* UI screen or component
-* Hook, form, or API-bound logic
-* Platform-specific integration (web, mobile)
-
-Codex MUST:
-
-1. **Read** the Epic-level PRD:
-   `/docs/frontend/epic/{EPIC_NAME}/PRD.md`
-
-2. **Locate and follow** the Feature-level specs:
-   `/docs/frontend/epic/{EPIC_NAME}/{FEATURE}/[PRD.md, TECH_SPEC.md]`
-
-3. **Trace the flow**:
-   `screen → form → hook/service → API contract`
-
-4. **Match**:
-
-   * Props and validation from TECH\_SPEC
-   * Loading/mutation/error behavior
-   * Tests specified in TECH\_SPEC
-
-5. **Do NOT invent** UI, behavior, or routing — only implement what is explicitly scoped in the specs.
-
-## 🔁 Clean Layer Handoff
-
-Codex must align implementation with the **frontend layering flow**:
+**Backend:**
 
 ```
-Platform UI (web/mobile)
-↓
-Shared Hooks & Forms
-↓
-API Layer (in /shared/api/)
-↓
-Schema Validation (/shared/schemas/)
+/docs/backend/<domain>/<module>/
+├─ PRD.md
+└─ TECH_SPEC.backend.md
 ```
 
-All layers must be fully tested, typed, and spec-compliant.
+**Frontend:**
+
+```
+/docs/frontend/<domain>/<module>/
+└─ TECH_SPEC.frontend.md
+```
+
+> Only generate PRD.md for user-facing features. Never create placeholder specs. Use `/shared/` for API contracts.
+
+---
+
+## 🔁 Clean Architecture Layer Flow
+
+**Backend:**
+```
+delivery → usecase → repository
+```
+* No logic in delivery or repository
+* Respect dependency injection and error boundaries
+* Use domain layer only if needed
+
+**Frontend:**
+```
+Page → Controller → Hook/Store → Components → UI
+```
+* No business logic inside components
+* Zod for validation
+* Shared logic must live in `/shared/`
+* Use Tailwind/Dripsy variants or tokens
+
+---
+
+## 🧭 Feature Specification Protocols
+
+Before implementing any feature, Codex MUST:
+
+**Backend:**
+
+1. Read `/docs/backend/<domain>/<module>/PRD.md` (if user-facing)
+2. Read `/docs/backend/<domain>/<module>/TECH_SPEC.backend.md`
+3. Respect the Clean Architecture layer
+4. Implement tests (unit + integration)
+
+**Frontend:**
+
+1. Read `/docs/frontend/<domain>/<module>/TECH_SPEC.frontend.md`
+2. Trace: `screen → form → hook/service → API contract`
+3. Match props, validation, behavior, loading, tests
+4. Never assume UI or behavior — follow the spec
+
+---
+
+## 🔒 Codex Non-Negotiables
+
+* Never bypass architecture layers
+* Never invent business logic or UI behavior
+* Never use shared mutable state
+* Never edit AGENT.md, ENGINEERING_GUIDE.md, or other root governance docs
+* Always enforce spec-based implementation
