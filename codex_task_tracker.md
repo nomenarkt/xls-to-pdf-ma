@@ -34,7 +34,8 @@
 | frontend | usePythonSubprocess JSDoc outputFile | hooks | ✅ Done | - | - | usePythonSubprocess.ts | Flight File Ingestion & Filtering | IPC Developer Experience | document JSON FlightRow array requirement | - | 2025-07-12 | 2025-07-12 |
 | Codex | Python error helper | hooks | ✅ Done | - | - | buildPythonErrorMessage.ts | Flight File Ingestion & Filtering | IPC Error Handling | improve subprocess error messages | - | 2025-07-12 | 2025-07-12 |
 | frontend | UserEvent migration | ui | ✅ Done | - | - | UploadBox.test.tsx, ModeSelector.test.tsx | XLS Upload UX | UI Testing Consistency | replace fireEvent with userEvent | - | 2025-07-12 | 2025-07-12 |
-| Codex | Update task logger schemas | context | ✅ Done | - | - | internal.context & utils | Task logging | Codex Tracker | update python/typescript loggers for 13 fields | - | 2025-07-13 | 2025-07-13 |
+| Codex | Update task logger schemas | context | ✅ Done | - | - | internal.context & utils | Task logging | Codex Tracker | update python/typescript loggers for 13 fields | pass | 2025-07-13 | 2025-07-13 |
 
 | backend | Drop category from /process | delivery | ✅ Done | delivery | flight | parse_filter | Data Handling | Flight Parsing | remove obsolete category field; update tests | pass | 2025-07-13 | 2025-07-13 |
 | backend | FlightRow domain model | domain | ✅ Done | domain | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement FlightRow model and refactor layers | pass | 2025-07-13 | 2025-07-13 |
+| backend | Sorting and pairing logic | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement leg pairing sort & return FlightRow | pass | 2025-07-13 | 2025-07-13 |
