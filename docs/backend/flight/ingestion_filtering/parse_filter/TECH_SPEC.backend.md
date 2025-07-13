@@ -22,13 +22,11 @@
 
 ## 🧠 Implementation Overview
 
-```mermaid
 graph TD
-    A[FastAPI Route: /process] --> B[UseCase: process_flight_data()]
-    B --> C[Repo: parse_and_filter_xls()]
-    C -->|Pandas| D[.xls In-Memory Parsing]
-    B --> E[Return filtered + reordered rows to frontend]
-```
+  A[FastAPI Route: /process] --> B[UseCase: process_flight_data()]
+  B --> C[Repo: parse_and_filter_xls()]
+  C --> D[Pandas | .xls In-Memory Parsing]
+  D --> E[Return filtered + reordered rows to frontend]
 
 ---
 
