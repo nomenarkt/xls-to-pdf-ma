@@ -20,50 +20,56 @@ Welcome! This document defines how Codex contributes to our backend codebase (Go
 
 ## 👥 Project Structure & Roles
 
-This monorepo is organized by architectural ownership:
-
 ```
 /backend/             → Server logic (Architect-owned)
 /frontend/            → Interface logic (Polyglot-owned)
 ```
 
-* Codex writes backend code based on tasks from The Architect.
-* Logic must remain within the task spec. Do not invent flows.
-* Clean layering and interface-based design are mandatory.
+Codex must:
+
+* Implement only what is explicitly scoped in `/docs/backend/<domain>/<module>/TECH_SPEC.backend.md`
+* Never invent routes, fields, behavior, or error cases
+* Always follow Clean Architecture layering: `delivery → usecase → repository`
 
 ---
 
 ## 🧱 Clean Architecture Layers
 
 ```
-/backend/delivery/    → HTTP handlers (input/output formatting, routing)
-/backend/usecase/     → Business logic (pure orchestration)
-/backend/repository/  → DB and API access (no business logic)
-/backend/domain/      → Optional: core entities and types
-/backend/internal/    → Utilities, configs, infrastructure
+/backend/delivery/       → HTTP controllers (no logic)
+/backend/usecase/        → Pure orchestration and validation
+/backend/repository/     → Interfaces to DBs or APIs
+/backend/domain/         → Optional core types and value objects
+/backend/internal/       → Infrastructure, logging, and environment config
 ```
 
-* `delivery → usecase → repository`
-* All communication via interfaces
-* No logic leakage or shortcut wiring
+Rules:
+
+* Use interfaces for all dependencies
+* No business logic in delivery or repository
+* No shared mutable state or cross-layer imports
 
 ---
 
 ## 🧠 Codex Execution Rules
 
-* Follow specs from The Architect without deviation.
-* Validate input explicitly.
-* Do not inject infrastructure into usecases.
-* All env/config access lives in `/backend/internal/infrastructure/`
+* Always reference `TECH_SPEC.backend.md` and PRD if available
+* Do not fetch unrelated files or guess structure
+* Inject dependencies using interfaces
+* All env/config access must be inside `internal/infrastructure/`
+* No bypass of architecture for tests or helper logic
 
-### 🔍 Preflight Verification Rule
+---
 
-✅ Checklist:
+### 🔍 Preflight Verification Checklist
 
-* [ ] Inspect existing handlers, usecases, repos
-* [ ] Search codebase for similar logic (`grep`/`find`)
-* [ ] Check `*_test.go` for coverage
-* [ ] Avoid duplication — **refactor instead**
+✅ Codex must:
+
+- [ ] Check if similar usecases/repos already exist
+- [ ] Reuse interfaces instead of duplicating logic
+- [ ] Confirm layer placement: usecase vs repo
+- [ ] Write tests before implementation
+- [ ] Log all task info to Codex tracker
 
 ---
 
@@ -71,88 +77,103 @@ This monorepo is organized by architectural ownership:
 
 Codex MUST recursively scan all `.md` files inside the following directories:
 
-* `/backend/tech-guides/api/`
-* `/backend/tech-guides/architecture/`
-* `/backend/tech-guides/coding/`
-* `/backend/tech-guides/devops/`
-* `/backend/tech-guides/domain/`
-* `/backend/tech-guides/languages/`
-* `/backend/tech-guides/security/`
-* `/backend/tech-guides/serverless/`
-* `/backend/tech-guides/storage/`
-* `/backend/tech-guides/testing/`
+- `/backend/tech-guides/api/`
+- `/backend/tech-guides/architecture/`
+- `/backend/tech-guides/coding/`
+- `/backend/tech-guides/devops/`
+- `/backend/tech-guides/domain/`
+- `/backend/tech-guides/languages/`
+- `/backend/tech-guides/security/`
+- `/backend/tech-guides/serverless/`
+- `/backend/tech-guides/storage/`
+- `/backend/tech-guides/testing/`
+- `/backend/tech-guides/backend_conventions.md`
+- `/backend/tech-guides/README.md`
 
-Codex must also read:
-
-* `/backend/tech-guides/backend_conventions.md`
-* `/backend/tech-guides/README.md`
-
-This structure enforces consistency while supporting extensibility.
+No implementation begins until these are loaded and checked.
 
 ---
 
-## 📓 Task Tracker Enforcement Rule
+## 📓 Codex Task Tracker Enforcement
 
-All backend Codex tasks must update `/codex_task_tracker.md`:
+Codex must log every task to `/codex_task_tracker.md`:
 
-* **Task Title**
-* **Phase**
-* **Layer(s)**: delivery, usecase, repository, etc.
-* **Status**: ✅ Done, ⏳ In Progress
-* **Context**: backend
-* **Notes**
-* **Created/Updated date**
+* Context: backend
+* Task Title
+* Phase
+* Status: ✅ Done | ⏳ In Progress
+* Layer(s): delivery, usecase, repository
+* Domain
+* Module
+* Epic
+* Feature
+* Description
+* Test Status
+* Created/Updated timestamps
 
-➡ Use `/backend/internal/context/task_logger.go` with `updateTaskTracker()` and `hasDuplicateTask()`.
-
-> Logging is **mandatory** for traceability and memory alignment.
+Use: `/backend/internal/context/task_logger.go`  
+Methods: `updateTaskTracker()`, `hasDuplicateTask()`, `cleanBacklog()`
 
 ---
 
-## 📊 Task Format from The Architect
-
-Codex receives tasks in this format:
+## 📦 Codex Task Format
 
 ```
-💻 Codex Task: [Function, Endpoint, Service]
-🛝 Context: backend | shared
+💻 Codex Task: [Function, Endpoint, Usecase]
+🗭 Context: backend
 📁 Layer: delivery | usecase | repository
-🌟 Objective: what the task delivers
+🎯 Objective: what it delivers
 
-🧹 Specs:
-- Input: payload, query, params, example
-- Validation: rules (e.g. > 0, ISO date)
-- Flow: delivery → usecase → repo
-- Auth: JWT required (userID, role)
-- Response: 200, 400, 403, 500 — with examples
+🧱 Module: [e.g. PDFExport]
+📦 Epic: [e.g. Report Generation]
+🔧 Feature: [e.g. Download Filtered Flight Logs]
 
-🥪 Tests:
-- Unit: valid, invalid, edge
-- Integration: framework-native
+🧲 Specs:
+- Input: request format, query, files
+- Validation: type rules, schema constraints
+- Flow: sanitize → validate → sort → transform → return
+- Auth: JWT with userID, email, role
+- Response: 200 OK, 400 Bad Request, etc.
+
+🧪 Tests:
+- Unit: success, invalid, edge
+- Integration: HTTP + system boundary
 - Coverage: ≥ 90%
-
-📦 Codex Must Follow:
-- Clean layering
-- Interface-based DI
-- `tech-guides/*.md` conventions
-
-⛔ Codex Must NOT:
-- Skip tests
-- Mix logic across layers
-- Inject config/env manually
-- Modify `/AGENT.md` directly
 ```
+
+---
+
+## 🧪 Test Expectations
+
+Codex must test **all branches**:
+
+| Language | Tools                                     |
+| -------- | ----------------------------------------- |
+| Go       | `*_test.go`, `httptest`, testify          |
+| Python   | `pytest`, `httpx.AsyncClient`             |
+| Java     | `JUnit`, `MockMvc`, `Mockito`             |
+| .NET     | `xUnit`, `FluentAssertions`, `TestServer` |
+| Rust     | `#[tokio::test]`, `reqwest`, `tower`      |
+
+Tests must be colocated, documented, and CI-enforced.
+
+---
+
+## 🔐 Auth & Security Rules
+
+* JWT required for all protected routes
+* JWT must inject: userID, email, role
+* RBAC enforced in usecase layer
+* No direct role checks in delivery layer
+* No leaking of internal errors or stack traces
 
 ---
 
 ## ✅ Commits & PRs
 
 * 1 PR = 1 task
-* Use [Conventional Commits](https://www.conventionalcommits.org/):
-
-  * `feat(api): add /refill endpoint`
-  * `fix(repo): handle null user`
-* Format by language:
+* Must use [Conventional Commits](https://www.conventionalcommits.org/)
+* Format before push:
 
   * Go: `go fmt`
   * Python: `black`, `isort`
@@ -162,45 +183,26 @@ Codex receives tasks in this format:
 
 ---
 
-## 🧪 Testing Standards
+## 📘 Docs Enforcement
 
-Codex must test **every branch and scenario**:
+* All backend tasks must trace to:
 
-| Language | Tools                                     |
-| -------- | ----------------------------------------- |
-| Go       | `*_test.go`, `httptest`, table-driven     |
-| Python   | `pytest`, `httpx.AsyncClient`             |
-| Java     | `JUnit`, `MockMvc`, `Mockito`             |
-| .NET     | `xUnit`, `FluentAssertions`, `TestServer` |
-| Rust     | `#[tokio::test]`, `tower`, `reqwest`      |
+```
+/docs/backend/<domain>/<module>/TECH_SPEC.backend.md
+```
 
-Tests must:
-
-* Be colocated with code
-* Cover success, failure, unauthorized
-* Pass CI with ≥ 90% coverage
+* Do not implement anything not documented
+* If no spec exists, pause and escalate to Architect GPT
 
 ---
 
-## 🔐 Auth & Security
+## 🔒 Summary
 
-* All endpoints must:
+This AGENT.md is non-editable and defines the backend execution contract.
 
-  * Require JWT with `userID`, `email`, `role`
-  * Use middleware to inject claims
-  * Enforce RBAC per spec
+* Strict layering: delivery → usecase → repository
+* No invention of routes, structure, or validation
+* Tests and logs are mandatory
+* Spec-first development only
 
-NEVER skip authorization logic.
-
----
-
-## ✅ Summary
-
-This document is the immutable contract for backend execution.
-
-* Clean Architecture enforced
-* No scope deviation
-* Logs and coverage required
-* Codex operates as implementer, not inventor
-
-Refer to `/backend/tech-guides/README.md` for language-specific architecture extensions.
+Always trace to `/docs/backend/` and respect conventions from `tech-guides/`.

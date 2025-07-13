@@ -10,7 +10,7 @@ Stack-specific variations belong in /tech-guides/{language}.md
 
 # AGENT.md – Codex Frontend Execution Guide
 
-Welcome! This document defines how Codex contributes to our frontend codebase (React, Vue, Flutter, Svelte, Angular). All contributions must follow component-driven architecture, test-first development, and strict task alignment.
+Welcome! This document defines how Codex contributes to our frontend codebase (React, Vue, Flutter, Svelte, Angular). All contributions must follow component-driven architecture, test-first development, and strict spec alignment.
 
 > 📘 For global Codex rules, see [`/AGENTS.md`](../AGENTS.md).
 > 📚 For task specs, GPT roles, and architecture rules, see [`/ENGINEERING_GUIDE.md`](../ENGINEERING_GUIDE.md).
@@ -20,36 +20,36 @@ Welcome! This document defines how Codex contributes to our frontend codebase (R
 
 ## 👥 Project Structure & Roles
 
-This monorepo is organized by platform responsibility:
-
 ```
-/backend/             → Server logic (Architect-owned)
-/frontend/web/        → Role-based web apps by stack: React, Vue, Svelte, Angular
-/frontend/mobile/     → Role-based mobile apps: React Native (Expo), Flutter
-/frontend/shared/     → Logic safe for both web and mobile (hooks, schemas, types, API)
+/frontend/
+├── web/         → Web UI (Next.js, Vue, Svelte, etc.)
+├── mobile/      → Mobile UI (React Native, Flutter)
+├── shared/      → Platform-neutral logic (hooks, schemas, types, forms)
+├── tech-guides/ → Execution rules for each platform
 ```
 
-* Codex writes logic based on tasks from The Polyglot (frontend) or The Architect (backend).
-* Shared logic must remain platform-neutral and fully testable.
-* NEVER invent features, flows, or props — Codex must always follow The Polyglot’s task spec exactly.
+Codex must:
+
+* Follow tasks authored by The Polyglot
+* Only implement what is defined in the associated TECH_SPEC
+* Never invent UI, behavior, routes, or props
+* Keep shared logic type-safe and platform-agnostic
 
 ---
 
 ## 🧠 Codex Execution Rules
 
-* Follow the spec. Never assume missing data.
-* Enforce validation schemas, styling tokens, and code patterns.
-* Keep logic portable, modular, and test-driven.
+* Always enforce validation using Zod
+* Never place business logic inside components
+* Use design tokens, accessibility rules, and platform-native conventions
+* Never mix platform-specific logic in `/shared/`
 
-### 🔍 Preflight Verification Rule
+### ✅ Preflight Checklist
 
-Before implementing a task, Codex must check for existing code:
-
-✅ Checklist:
-
-* [ ] Look in `/web/`, `/mobile/`, `/shared/` for matching component, hook, or schema
-* [ ] Confirm presence via test files
-* [ ] If partial/legacy code exists, extend/refactor it — don’t duplicate
+- [ ] Look for existing component, hook, or schema
+- [ ] Extend or refactor if partially implemented
+- [ ] Avoid duplicating state logic or data fetches
+- [ ] Confirm validation and test coverage
 
 ---
 
@@ -57,152 +57,166 @@ Before implementing a task, Codex must check for existing code:
 
 Codex MUST recursively scan all `.md` files inside the following directories:
 
+* `/frontend/tech-guides/web/`
 * `/frontend/tech-guides/mobile/`
 * `/frontend/tech-guides/shared/`
-* `/frontend/tech-guides/web/`
-
-This structure supports extensibility while enforcing consistent Codex behavior.
-
----
-
-## 🧾 Task Tracker Enforcement Rule
-
-All frontend Codex tasks must update `/codex_task_tracker.md` with:
-
-* **Task Title**
-* **Phase**
-* **Layer(s)**: ui, state, hooks, api, routing
-* **Status**: ✅ Done, ⏳ In Progress
-* **Context**: frontend
-* **Notes**
-* **Created/Updated date**
-
-➡ Use `/frontend/utils/taskLogger.ts` with `updateTaskTracker()` + `hasDuplicateTask()`.
-
-Logging is **mandatory** for traceability and memory sync.
+* `/frontend/tech-guides/frontend_conventions.md`
+* `/frontend/tech-guides/README.md`
 
 ---
 
-## 📊 Task Format from The Polyglot
+## 📓 Task Tracker Enforcement
 
-Codex receives tasks in this format:
+Codex must log each frontend task to `/codex_task_tracker.md` with:
+
+* Context: frontend
+* Task Title
+* Phase
+* Status: ✅ Done | ⏳ In Progress
+* Layer: screen, form, hook, api, validation, schema
+* Platform: web | mobile | shared
+* Domain
+* Module
+* Epic
+* Feature
+* Description
+* Test Status
+* Created/Updated timestamps
+
+Use: `/frontend/utils/taskLogger.ts`  
+Methods: `updateTaskTracker()`, `hasDuplicateTask()`, `cleanBacklog()`
+
+---
+
+## 🧩 Task Format (From The Polyglot)
 
 ```
 💻 Codex Task: [Component / Screen / Hook / Utility]
-🧭 Context: frontend | shared
-📁 Platform: web | mobile | shared | vue | angular | svelte
-🎯 Objective: what the feature enables
+🗭 Context: frontend | shared
+📁 Platform: web | mobile | shared
+🎯 Objective: what it delivers
 
-🧩 Specs:
+🧱 Module: [e.g. BillingForm]
+📦 Epic: [e.g. Payments Infrastructure]
+🔧 Feature: [e.g. Checkout Flow]
 
-* Props / Inputs
-* UI Design: Tailwind / Dripsy / native
-* Behavior
-* Validation: Zod / Yup
-* Data: API hook / props / context
-* Routing (if any)
+🧲 Specs:
+- Props / Inputs
+- Validation: Zod / Yup
+- UI Design: Tailwind / Dripsy / native
+- Behavior: click, tap, swipe, async flow
+- Data: hook | context | API
+- Routing (if any)
 
 🧪 Tests:
-
-* Validate props and edge cases
-* Simulate gestures
-* Assert navigation or mutation
-
-📦 Codex Must Follow:
-
-* TDD-first implementation
-* `tech-guides/*.md` rules
-* `Zod`, `react-hook-form` where applicable
-
-⛔ Codex Must NOT:
-
-* Invent UI or flows
-* Skip tests
-* Fetch data in components
-* Mix platform code into `/shared/`
+- Validate all inputs and edge cases
+- Simulate interactions
+- Confirm navigation or mutations
 ```
 
 ---
 
 ## ✅ Commits & PRs
 
-* One feature or fix per PR
+* One task = one PR
 * Use [Conventional Commits](https://www.conventionalcommits.org/):
 
-  * `feat(web): add CheckoutBanner`
-  * `fix(mobile): fix SafeArea padding bug`
-* Keep commits atomic and tested
+  * `feat(web): add CheckoutForm`
+  * `fix(mobile): fix SafeArea bug`
+* Format code and confirm test pass before pushing
 
 ---
 
 ## 🧪 Testing Standards
 
-Codex must use platform-native tools:
+Codex must write colocated tests using stack-native tools:
 
-| Stack        | Tools                                         |
-| ------------ | --------------------------------------------- |
-| React        | `Jest`, `@testing-library/react`              |
-| Vue          | `Vitest`, `vue/test-utils`                    |
-| Svelte       | `svelte-testing-library`, `vitest`            |
-| React Native | `@testing-library/react-native`, `jest`       |
-| Flutter      | `flutter_test`, `mockito`, `integration_test` |
+| Platform     | Tools                                          |
+| ------------ | ---------------------------------------------- |
+| React        | `@testing-library/react`, `jest`               |
+| Vue          | `vitest`, `vue/test-utils`                     |
+| Svelte       | `svelte-testing-library`, `vitest`             |
+| React Native | `@testing-library/react-native`, `jest`        |
+| Flutter      | `flutter_test`, `mockito`, `integration_test`  |
 
-Tests must cover:
+Test must cover:
 
-* Render outcomes
-* Valid/invalid input
-* Edge case logic
-* API loading/mutation states
-
-Place all test files beside their source (`*.test.ts`, `*_test.dart`, etc.)
+* Render success/failure
+* Input validation
+* Mutation behavior
+* Loading and error states
 
 ---
 
-## 🎨 Styling
+## 🎨 Styling & Accessibility
 
-* Use design tokens: `theme.ts`, `ThemeData`, or `nativewind.config.js`
-* NEVER hardcode layout, spacing, colors, or fonts
+* Use design tokens (theme.ts, ThemeData, nativewind.config.js)
+* Never hardcode layout, spacing, colors, or text
 * Enforce:
 
   * Dark mode compatibility
-  * Accessibility: labels, contrast, touch targets
-  * Safe areas on mobile
+  * Semantic HTML (web)
+  * Safe Area (mobile)
+  * A11Y: labels, focus, tap size, contrast
 
 ---
 
-## 🧠 Shared Logic Standards
+## 🔁 Layering Rules (Frontend Clean Arch)
 
-All `/shared/` code must be:
+```
+Screen
+↓
+Form / Controller
+↓
+Hook / Store
+↓
+API Service
+↓
+Zod Schema
+```
 
-* Fully tested
-* Platform-agnostic
+Each layer must be:
+
 * Type-safe
-* Free of any direct imports from:
-
-  * `next/*`
-  * `react-native`
-  * `flutter/*`
-  * DOM APIs (`window`, `document`)
+* Fully tested
+* Explicitly documented in TECH_SPEC
 
 ---
 
-## 🚫 DO NOT
+## 🧠 Shared Logic Rules
 
-* Push speculative or unscoped logic
-* Mix web/mobile logic in shared
-* Write components without tests
-* Hardcode strings or layouts
+All `/shared/` logic must:
 
----
-
-## ✅ YOU MUST
-
-* Use validation schemas
-* Follow `/tech-guides/*.md`
-* Log to `/codex_task_tracker.md`
-* Respect assigned platform boundaries
-* Follow strict task execution with zero invention
+* Be framework-agnostic
+* Avoid use of `window`, `document`, `react-native`, `flutter`
+* Include colocated tests
+* Use TypeScript and Zod
+* Expose interfaces/hooks for reuse in `web` and `mobile`
 
 ---
 
-This document is the **immutable Codex contract** for all frontend contributions.
+## 🔒 Codex Must Never
+
+* Invent new props, APIs, or UI flows
+* Mix platform logic in shared
+* Skip Zod validation
+* Write untested components or hooks
+* Use `any` or untyped states
+* Hardcode string, layout, color
+
+---
+
+## 📘 Documentation Alignment
+
+All tasks must trace to:
+
+```
+/docs/frontend/<domain>/<module>/TECH_SPEC.frontend.md
+```
+
+Codex must never build a UI or feature that is not clearly defined in the spec.
+
+---
+
+This is the immutable frontend execution contract for Codex.
+It enforces architecture layering, validation, styling consistency, and TDD.
