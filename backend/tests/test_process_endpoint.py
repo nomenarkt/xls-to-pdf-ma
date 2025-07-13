@@ -70,6 +70,8 @@ async def test_process_valid_commandes(
             "imma": "F-1",
             "sd_loc": "2025-07-11T08:00:00",
             "sa_loc": "2025-07-11T12:00:00",
+            "jc": 0,
+            "yc": 0,
         }
     ]
 
@@ -163,3 +165,5 @@ async def test_precommandes_filters_j_plus_2(
     body = response.json()
     assert len(body) == 1
     assert body[0]["num_vol"] == "AF2"
+    assert body[0]["jc"] == 0
+    assert body[0]["yc"] == 0
