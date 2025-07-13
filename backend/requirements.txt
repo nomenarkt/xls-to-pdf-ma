@@ -1,6 +1,9 @@
 fastapi
 pandas
 xlrd
+xlwt
 pytest
 httpx
 openpyxl
+python-multipart
+pytest-asyncio
