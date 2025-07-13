@@ -5,7 +5,7 @@ This mirrors the behavior of task_logger.go for Python tooling and tests."""
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
