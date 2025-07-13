@@ -1,31 +1,23 @@
-Here is the updated version of `vision.md` tailored to reflect the current state and direction of your offline browser-based XLS-to-PDF tool, aligned with Clean Architecture and Codex task governance:
-
----
-
-# Vision
-
 ## 🧭 Purpose
 
-Airline ground teams today manage catering and cabin service planning using manual Excel sheets, printing, and inconsistently formatted files. This app fully automates flight filtering, movement pairing, and editable PDF command generation for **Prestations à Bord** and **Salon** operations — without requiring internet access.
+Airline ground teams today manage catering and cabin service planning using manual Excel sheets, printing, and inconsistently formatted files. This app fully automates flight filtering, movement pairing, and PDF command generation for **Prestations à Bord** and **Salon** operations — without requiring internet access.
 
 ## 👥 Target Audience
 
 * Ground operations staff (catering, logistics coordinators)
-* Airline dispatchers and tarmac supervisors
 * Agents working in offline/low-connectivity environments
 
 ## 🛠 Core Capabilities
 
 * XLS flight schedule parsing (`.xls`, `.xlsx`)
 * Automatic J+1 / J+2 filtering logic
-* Editable PDF command generation using ReportLab
+* PDF command generation using ReportLab
 * “Mvt” detection and pairing logic for Salons and Prestations
 * Fully offline tool running in browser (no installation required)
 
 ## 💎 Differentiators
 
 * 📴 **100% offline** — works in airport operations rooms without internet
-* 🖋 **Editable PDFs** — PDFs can be changed in Acrobat or Foxit, not just printed
 * 🔁 **Custom flight-pairing and movement logic** built specifically for airline ops
 * ⚙️ **No installation or backend server required** — runs via embedded browser
 * 🎯 **Cleaner, faster, and simpler** than legacy ERP tools or Excel workarounds
@@ -49,7 +41,7 @@ Airline ground teams today manage catering and cabin service planning using manu
 
 ## 🧪 Success Criteria
 
-* Agents generate valid, editable PDF commands in <5 minutes
+* Agents generate valid, PDF commands in <5 minutes
 * Zero manual editing needed after PDF export
 * System validates XLS inputs and applies correct J+1/J+2/Mvt logic
 * Works without internet, network drives, or authentication
