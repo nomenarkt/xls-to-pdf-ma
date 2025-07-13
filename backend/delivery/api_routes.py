@@ -15,7 +15,10 @@ router = APIRouter()
     "/process",
     response_model=list[FlightRow],
     summary="Filter and return structured flights",
-    description="Parses XLS, filters by J+1 or J+2, returns formatted rows for pairing and layout.",
+    description=(
+        "Parses XLS, filters by J+1 or J+2, "
+        "returns formatted rows for pairing and layout."
+    ),
 )
 async def process(
     file: UploadFile = File(...),

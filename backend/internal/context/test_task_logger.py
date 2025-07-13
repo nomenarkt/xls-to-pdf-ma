@@ -23,8 +23,10 @@ def _setup_files(tmp_path: Path) -> None:
         "🗂️ Codex Task Tracker (SDLC Phase View | Status: To do, In Progress,"
         " Done | Context: backend/frontend/... | Notes: Technical and"
         " functional documentation)\n\n"
-        "| Context | Task Title | Phase | Status | Layer | Domain | Module | Epic | Feature | Description | Test Status | Created | Updated |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| Context | Task Title | Phase | Status | Layer | Domain | Module |"
+        " Epic | Feature | Description | Test Status | Created | Updated |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | "
+        "--- | --- | --- | --- | --- |\n"
     )
     tracker.write_text(header)
 
