@@ -59,7 +59,7 @@ async def test_process_valid_commandes(
         response = await ac.post(
             "/process",
             files={"file": ("test.xls", file_obj, "application/vnd.ms-excel")},
-            data={"mode": "commandes", "category": "salon"},
+            data={"mode": "commandes"},
         )
     assert response.status_code == 200
     assert response.json() == [
@@ -87,7 +87,7 @@ async def test_invalid_file_type(monkeypatch: pytest.MonkeyPatch) -> None:
         response = await ac.post(
             "/process",
             files={"file": ("bad.txt", file_obj, "text/plain")},
-            data={"mode": "commandes", "category": "salon"},
+            data={"mode": "commandes"},
         )
     assert response.status_code == 400
     assert "Invalid file type" in response.text
@@ -117,7 +117,7 @@ async def test_missing_column_error(monkeypatch: pytest.MonkeyPatch) -> None:
         response = await ac.post(
             "/process",
             files={"file": ("test.xls", file_obj, "application/vnd.ms-excel")},
-            data={"mode": "commandes", "category": "salon"},
+            data={"mode": "commandes"},
         )
     assert response.status_code == 400
     assert "Missing column" in response.text
@@ -157,7 +157,7 @@ async def test_precommandes_filters_j_plus_2(
         response = await ac.post(
             "/process",
             files={"file": ("test.xls", file_obj, "application/vnd.ms-excel")},
-            data={"mode": "precommandes", "category": "salon"},
+            data={"mode": "precommandes"},
         )
     assert response.status_code == 200
     body = response.json()
