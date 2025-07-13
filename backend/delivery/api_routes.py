@@ -14,7 +14,6 @@ router = APIRouter()
 async def process(
     file: UploadFile = File(...),
     mode: Literal["commandes", "precommandes"] = Form(...),
-    category: Literal["salon", "prestations"] = Form(...),
 ) -> list[dict]:
     today = date.today()
     if not file.filename.endswith(".xls"):

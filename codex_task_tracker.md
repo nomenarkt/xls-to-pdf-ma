@@ -36,3 +36,4 @@
 | frontend | UserEvent migration | ui | ✅ Done | - | - | UploadBox.test.tsx, ModeSelector.test.tsx | XLS Upload UX | UI Testing Consistency | replace fireEvent with userEvent | - | 2025-07-12 | 2025-07-12 |
 | Codex | Update task logger schemas | context | ✅ Done | - | - | internal.context & utils | Task logging | Codex Tracker | update python/typescript loggers for 13 fields | - | 2025-07-13 | 2025-07-13 |
 
+| backend | Drop category from /process | delivery | ✅ Done | delivery | flight | parse_filter | Data Handling | Flight Parsing | remove obsolete category field; update tests | pass | 2025-07-13 | 2025-07-13 |
