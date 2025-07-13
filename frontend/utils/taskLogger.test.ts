@@ -25,10 +25,9 @@ test("prefixes task with parent name", async () => {
   await updateTaskTracker(
     {
       taskName: "Child",
-      layers: "context",
+      phase: "context",
       status: "✅ Done",
-      assignedTo: "Codex",
-      notes: "notes",
+      description: "notes",
     },
     "Parent",
   );
@@ -42,10 +41,9 @@ test("cleanBacklog removes prefixed tasks", async () => {
   await updateTaskTracker(
     {
       taskName: "Part1",
-      layers: "context",
+      phase: "context",
       status: "✅ Done",
-      assignedTo: "Codex",
-      notes: "",
+      description: "",
     },
     "Sample",
   );
@@ -58,10 +56,9 @@ test("cleanBacklog removes tasks when tracker uses hyphen", async () => {
   fs.writeFileSync(backlogPath, "### Codex Task: Hyphen\n");
   await updateTaskTracker({
     taskName: "Hyphen-Subtask",
-    layers: "context",
+    phase: "context",
     status: "✅ Done",
-    assignedTo: "Codex",
-    notes: "",
+    description: "",
   });
   const backlog = fs.readFileSync(backlogPath, "utf8");
   expect(backlog.trim()).toBe("");
@@ -72,18 +69,16 @@ test("updates existing row when task is logged twice", async () => {
   jest.useFakeTimers().setSystemTime(new Date("2025-01-01"));
   await updateTaskTracker({
     taskName: "Dup",
-    layers: "context",
+    phase: "context",
     status: "⏳ In Progress",
-    assignedTo: "Codex",
-    notes: "first",
+    description: "first",
   });
   jest.setSystemTime(new Date("2025-01-02"));
   await updateTaskTracker({
     taskName: "Dup",
-    layers: "context",
+    phase: "context",
     status: "✅ Done",
-    assignedTo: "Codex",
-    notes: "second",
+    description: "second",
   });
   jest.useRealTimers();
   const lines = fs

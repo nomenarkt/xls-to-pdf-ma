@@ -6,13 +6,19 @@ import path from "path";
 const BASE_DIR = process.env.BASE_DIR || ""; // Optional override for tests
 const TASK_LOG_FILE = "codex_task_tracker.md";
 const BACKLOG_FILE = "frontend/backlog.md";
+const CONTEXT = "frontend";
 
 export interface TaskLogEntry {
   taskName: string;
-  layers: string;
+  phase: string;
   status: "✅ Done" | "⏳ In Progress" | "❌ Dropped";
-  assignedTo: string;
-  notes: string;
+  layer?: string;
+  domain?: string;
+  module?: string;
+  epic?: string;
+  feature?: string;
+  description?: string;
+  testStatus?: string;
 }
 
 export async function updateTaskTracker(
@@ -23,26 +29,40 @@ export async function updateTaskTracker(
   if (parentTaskName && !taskName.startsWith(`${parentTaskName} – `)) {
     taskName = `${parentTaskName} – ${taskName}`;
   }
+  entry.taskName = taskName;
 
   const logPath = path.join(BASE_DIR, TASK_LOG_FILE);
   const now = new Date().toISOString().slice(0, 10);
+
+  const rowValues = [
+    CONTEXT,
+    entry.taskName,
+    entry.phase,
+    entry.status,
+    entry.layer ?? "-",
+    entry.domain ?? "-",
+    entry.module ?? "-",
+    entry.epic ?? "-",
+    entry.feature ?? "-",
+    entry.description ?? "",
+    entry.testStatus ?? "-",
+  ];
 
   if (await hasDuplicateTask(taskName)) {
     const content = await fs.promises.readFile(logPath, "utf8").catch(() => "");
     const lines = content.split("\n");
     for (let i = 0; i < lines.length; i++) {
       const fields = lines[i].split("|").map((f) => f.trim());
-      if (fields.length < 7) continue;
-      if (fields[1] === taskName) {
-        const created = fields[6] || now;
-        lines[i] =
-          `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${created} | ${now} |`;
+      if (fields.length < 14) continue;
+      if (fields[1] === CONTEXT && fields[2] === taskName) {
+        const created = fields[12] || now;
+        lines[i] = `| ${[...rowValues, created, now].join(" | ")} |`;
         break;
       }
     }
     await fs.promises.writeFile(logPath, lines.join("\n"));
   } else {
-    const row = `| ${taskName.padEnd(25)} | ${entry.layers.padEnd(25)} | ${entry.status.padEnd(13)} | ${entry.assignedTo.padEnd(11)} | ${entry.notes} | ${now} | ${now} |\n`;
+    const row = `| ${[...rowValues, now, now].join(" | ")} |\n`;
     await fs.promises.appendFile(logPath, row);
   }
 
@@ -53,7 +73,12 @@ async function hasDuplicateTask(taskName: string): Promise<boolean> {
   const logPath = path.join(BASE_DIR, TASK_LOG_FILE);
   try {
     const content = await fs.promises.readFile(logPath, "utf8");
-    return content.includes(`| ${taskName} `);
+    return content.split("\n").some((line) => {
+      const fields = line.split("|").map((f) => f.trim());
+      return (
+        fields.length >= 14 && fields[1] === CONTEXT && fields[2] === taskName
+      );
+    });
   } catch {
     return false;
   }
@@ -104,9 +129,9 @@ async function parseDoneTasks(): Promise<Set<string>> {
 
     for (const line of lines) {
       const fields = line.split("|").map((f) => f.trim());
-      if (fields.length < 7) continue;
-      if (fields[3] === "✅ Done") {
-        const name = fields[1];
+      if (fields.length < 14) continue;
+      if (fields[4] === "✅ Done") {
+        const name = fields[2];
         tasks.add(name);
         const trimmed = name.split(/[\u2013-]/, 1)[0].trim();
         if (trimmed && trimmed !== name) {

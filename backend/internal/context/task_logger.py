@@ -5,12 +5,30 @@ This mirrors the behavior of task_logger.go for Python tooling and tests."""
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
 BASE_DIR = ""
+CONTEXT = "backend"
 BACKLOG_FILE = "backend/backlog.md"
 TASK_LOG_FILE = "codex_task_tracker.md"
+
+
+@dataclass
+class TaskLogEntry:
+    """Represents a single row in codex_task_tracker."""
+
+    task_name: str
+    phase: str
+    status: str
+    layer: str = "-"
+    domain: str = "-"
+    module: str = "-"
+    epic: str = "-"
+    feature: str = "-"
+    description: str = ""
+    test_status: str = "-"
 
 
 def resolve_base_dir() -> Path:
@@ -33,54 +51,58 @@ def has_duplicate_task(task_name: str) -> bool:
     fp = base / TASK_LOG_FILE
     if not fp.exists():
         return False
-    pattern = re.compile(r"\|\s*(.*?)\s*\|")
     with fp.open("r", encoding="utf-8") as file:
         for line in file:
-            match = pattern.search(line)
-            if match and match.group(1) == task_name:
+            fields = [f.strip() for f in line.split("|")]
+            if len(fields) < 14:
+                continue
+            if fields[1] == CONTEXT and fields[2] == task_name:
                 return True
     return False
 
 
 def update_task_tracker(
-    task_name: str,
-    layers: str,
-    status: str,
-    assigned_to: str,
-    notes: str,
+    entry: TaskLogEntry,
     parent_task_name: str | None = None,
 ) -> None:
     """Append or update a task entry in codex_task_tracker.md."""
+    task_name = entry.task_name
     parent = parent_task_name or ""
     if parent and not task_name.startswith(f"{parent} – "):
         task_name = f"{parent} – {task_name}"
+    entry.task_name = task_name
 
     base = resolve_base_dir()
     fp = base / TASK_LOG_FILE
     now = datetime.now().strftime("%Y-%m-%d")
 
+    row_vals = [
+        CONTEXT,
+        entry.task_name,
+        entry.phase,
+        entry.status,
+        entry.layer,
+        entry.domain,
+        entry.module,
+        entry.epic,
+        entry.feature,
+        entry.description,
+        entry.test_status,
+    ]
+
     if has_duplicate_task(task_name):
         data = fp.read_text(encoding="utf-8").split("\n")
         for i, line in enumerate(data):
             fields = [f.strip() for f in line.split("|")]
-            if len(fields) < 5:
+            if len(fields) < 14:
                 continue
-            name = fields[1]
-            if name == task_name:
-                created = now if len(fields) < 7 else fields[6]
-                updated = now
-                data[i] = (
-                    f"| {task_name:<25} | {layers:<25} | {status:<13} | "
-                    f"{assigned_to:<11} | {notes} | {created:<10} | "
-                    f"{updated:<10} |"
-                )
+            if fields[1] == CONTEXT and fields[2] == task_name:
+                created = fields[12] if len(fields) > 13 else now
+                data[i] = "| " + " | ".join(row_vals + [created, now]) + " |"
                 break
         fp.write_text("\n".join(data), encoding="utf-8")
     else:
-        row = (
-            f"| {task_name:<25} | {layers:<25} | {status:<13} | "
-            f"{assigned_to:<11} | {notes} | {now:<10} | {now:<10} |\n"
-        )
+        row = "| " + " | ".join(row_vals + [now, now]) + " |\n"
         with fp.open("a", encoding="utf-8") as file:
             file.write(row)
 
@@ -89,22 +111,11 @@ def update_task_tracker(
 
 def append_subtask(
     parent_task: str,
-    subtask: str,
-    layers: str,
-    status: str,
-    assigned_to: str,
-    notes: str,
+    subtask_entry: TaskLogEntry,
 ) -> None:
     """Prefix subtask with parent task and delegate to update_task_tracker."""
 
-    update_task_tracker(
-        subtask,
-        layers,
-        status,
-        assigned_to,
-        notes,
-        parent_task,
-    )
+    update_task_tracker(subtask_entry, parent_task)
 
 
 def parse_done_tasks() -> set[str]:
@@ -117,10 +128,10 @@ def parse_done_tasks() -> set[str]:
     with fp.open("r", encoding="utf-8") as file:
         for line in file:
             fields = [f.strip() for f in line.split("|")]
-            if len(fields) < 5:
+            if len(fields) < 14:
                 continue
-            name = fields[1]
-            status = fields[3]
+            name = fields[2]
+            status = fields[4]
             if status == "✅ Done":
                 tasks.add(name)
                 trimmed = re.split(r"[\u2013-]", name, 1)[0].strip()
