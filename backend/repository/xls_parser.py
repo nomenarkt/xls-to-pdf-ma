@@ -5,6 +5,8 @@ from typing import BinaryIO
 
 import pandas as pd
 
+from backend.domain import FlightRow
+
 REQUIRED_COLUMNS = ["Num Vol", "Départ", "Arrivée", "Imma", "SD LOC", "SA LOC"]
 
 
@@ -12,7 +14,7 @@ def parse_and_filter_xls(
     file_stream: BinaryIO,
     mode: str,
     today: date,
-) -> list[dict]:
+) -> list[FlightRow]:
     """Load XLS stream and return rows matching the target date."""
     df = pd.read_excel(file_stream)
 
@@ -32,16 +34,18 @@ def parse_and_filter_xls(
 
     filtered = df[df["SD LOC"].dt.date == target]
 
-    result = []
+    result: list[FlightRow] = []
     for _, row in filtered.iterrows():
         result.append(
-            {
-                "num_vol": row["Num Vol"],
-                "depart": row["Départ"],
-                "arrivee": row["Arrivée"],
-                "imma": row["Imma"],
-                "sd_loc": row["SD LOC"],
-                "sa_loc": row["SA LOC"],
-            }
+            FlightRow(
+                num_vol=row["Num Vol"],
+                depart=row["Départ"],
+                arrivee=row["Arrivée"],
+                imma=row["Imma"],
+                sd_loc=row["SD LOC"],
+                sa_loc=row["SA LOC"],
+                jc=0,
+                yc=0,
+            )
         )
     return result

@@ -37,3 +37,4 @@
 | Codex | Update task logger schemas | context | ✅ Done | - | - | internal.context & utils | Task logging | Codex Tracker | update python/typescript loggers for 13 fields | - | 2025-07-13 | 2025-07-13 |
 
 | backend | Drop category from /process | delivery | ✅ Done | delivery | flight | parse_filter | Data Handling | Flight Parsing | remove obsolete category field; update tests | pass | 2025-07-13 | 2025-07-13 |
+| backend | FlightRow domain model | domain | ✅ Done | domain | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement FlightRow model and refactor layers | pass | 2025-07-13 | 2025-07-13 |

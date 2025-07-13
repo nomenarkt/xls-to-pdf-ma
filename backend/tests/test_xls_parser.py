@@ -9,6 +9,8 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from backend.domain import FlightRow
+
 MODULE_PATH = Path(__file__).parents[1] / "repository" / "xls_parser.py"
 spec = util.spec_from_file_location("xls_parser", MODULE_PATH)
 assert spec and spec.loader
@@ -48,7 +50,8 @@ def test_parse_commandes() -> None:
     file_obj = _make_xls(rows)
     result = parse_and_filter_xls(file_obj, "commandes", today)
     assert len(result) == 1
-    assert result[0]["num_vol"] == "AF1"
+    assert isinstance(result[0], FlightRow)
+    assert result[0].num_vol == "AF1"
 
 
 def test_parse_precommandes() -> None:
@@ -74,7 +77,8 @@ def test_parse_precommandes() -> None:
     file_obj = _make_xls(rows)
     result = parse_and_filter_xls(file_obj, "precommandes", today)
     assert len(result) == 1
-    assert result[0]["num_vol"] == "AF2"
+    assert isinstance(result[0], FlightRow)
+    assert result[0].num_vol == "AF2"
 
 
 def test_missing_column_error() -> None:
