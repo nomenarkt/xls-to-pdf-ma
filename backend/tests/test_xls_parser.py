@@ -96,3 +96,45 @@ def test_missing_column_error() -> None:
     file_obj = _make_xls(rows)
     with pytest.raises(ValueError, match="Missing column: Imma"):
         parse_and_filter_xls(file_obj, "commandes", today)
+
+
+def test_pairing_sort_order() -> None:
+    today = date(2025, 7, 10)
+    rows = [
+        {
+            "Num Vol": "MD201",
+            "Départ": "TNR",
+            "Arrivée": "CDG",
+            "Imma": "F-4",
+            "SD LOC": datetime(2025, 7, 11, 20, 0),
+            "SA LOC": datetime(2025, 7, 11, 23, 0),
+        },
+        {
+            "Num Vol": "MD200",
+            "Départ": "CDG",
+            "Arrivée": "TNR",
+            "Imma": "F-3",
+            "SD LOC": datetime(2025, 7, 11, 10, 0),
+            "SA LOC": datetime(2025, 7, 11, 13, 0),
+        },
+        {
+            "Num Vol": "MD101",
+            "Départ": "TLE",
+            "Arrivée": "TNR",
+            "Imma": "F-2",
+            "SD LOC": datetime(2025, 7, 11, 16, 0),
+            "SA LOC": datetime(2025, 7, 11, 18, 0),
+        },
+        {
+            "Num Vol": "MD100",
+            "Départ": "TNR",
+            "Arrivée": "TLE",
+            "Imma": "F-1",
+            "SD LOC": datetime(2025, 7, 11, 8, 0),
+            "SA LOC": datetime(2025, 7, 11, 9, 30),
+        },
+    ]
+    file_obj = _make_xls(rows)
+    result = parse_and_filter_xls(file_obj, "commandes", today)
+    order = [r.num_vol for r in result]
+    assert order == ["MD100", "MD101", "MD200", "MD201"]

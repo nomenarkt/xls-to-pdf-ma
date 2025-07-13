@@ -32,10 +32,25 @@ def parse_and_filter_xls(
     df["SD LOC"] = pd.to_datetime(df["SD LOC"], errors="coerce")
     df["SA LOC"] = pd.to_datetime(df["SA LOC"], errors="coerce")
 
-    filtered = df[df["SD LOC"].dt.date == target]
+    filtered = df[df["SD LOC"].dt.date == target].copy()
+
+    if filtered.empty:
+        return []
+
+    filtered["pair_key"] = filtered.apply(
+        lambda r: tuple(sorted([r["Départ"], r["Arrivée"]])), axis=1
+    )
+
+    grouped = []
+    for _, group in filtered.groupby("pair_key"):
+        group_sorted = group.sort_values("SD LOC")
+        grouped.append((group_sorted["SD LOC"].iloc[0], group_sorted))
+
+    grouped.sort(key=lambda x: x[0])
+    ordered_df = pd.concat([g[1] for g in grouped], ignore_index=True)
 
     result: list[FlightRow] = []
-    for _, row in filtered.iterrows():
+    for _, row in ordered_df.iterrows():
         result.append(
             FlightRow(
                 num_vol=row["Num Vol"],
