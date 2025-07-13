@@ -23,11 +23,8 @@ def _setup_files(tmp_path: Path) -> None:
         "🗂️ Codex Task Tracker (SDLC Phase View | Status: To do, In Progress,"
         " Done | Context: backend/frontend/... | Notes: Technical and"
         " functional documentation)\n\n"
-        "| **Task Title**                    | **Phase**                   |"  # noqa: E501
-        " **Status** | **Context** | **Notes** | **Created** | **Updated** |\n"  # noqa: E501
-        "| --------------------------------- | ---------------------------"  # noqa: E501
-        " | ---------- | ----------- | --------------------------------------------------------------"  # noqa: E501
-        " | ---------- | --------- |\n"  # noqa: E501
+        "| Context | Task Title | Phase | Status | Layer | Domain | Module | Epic | Feature | Description | Test Status | Created | Updated |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
     )
     tracker.write_text(header)
 
@@ -50,11 +47,12 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
 
     if scenario == "append_new":
         tl.update_task_tracker(
-            "TaskA",
-            "context",
-            "⏳ In Progress",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="TaskA",
+                phase="context",
+                status="⏳ In Progress",
+                description="notes",
+            )
         )
         text = (tmp_path / "codex_task_tracker.md").read_text()
         assert "TaskA" in text and "⏳ In Progress" in text
@@ -62,18 +60,20 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
 
     elif scenario == "update_existing":
         tl.update_task_tracker(
-            "Sample",
-            "context",
-            "⏳ In Progress",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Sample",
+                phase="context",
+                status="⏳ In Progress",
+                description="notes",
+            )
         )
         tl.update_task_tracker(
-            "Sample",
-            "context",
-            "✅ Done",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Sample",
+                phase="context",
+                status="✅ Done",
+                description="notes",
+            )
         )
         content = (tmp_path / "codex_task_tracker.md").read_text()
         assert content.count("Sample") == 1
@@ -84,21 +84,23 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
         backlog = tmp_path / "backend" / "backlog.md"
         backlog.write_text(backlog.read_text() + "### Codex Task: Another\n")
         tl.update_task_tracker(
-            "Another",
-            "context",
-            "✅ Done",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Another",
+                phase="context",
+                status="✅ Done",
+                description="notes",
+            )
         )
         assert "Another" not in backlog.read_text()
 
     elif scenario == "missing_files":
         tl.update_task_tracker(
-            "Missing",
-            "context",
-            "⏳ In Progress",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Missing",
+                phase="context",
+                status="⏳ In Progress",
+                description="notes",
+            )
         )
         assert (tmp_path / "codex_task_tracker.md").exists()
         assert not (tmp_path / "backend" / "backlog.md").exists()
@@ -106,11 +108,12 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
     elif scenario == "prefix_behavior":
         tl.append_subtask(
             "Parent",
-            "Child",
-            "context",
-            "✅ Done",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Child",
+                phase="context",
+                status="✅ Done",
+                description="notes",
+            ),
         )
         content = (tmp_path / "codex_task_tracker.md").read_text()
         assert "Parent – Child" in content
@@ -119,11 +122,12 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
         backlog = tmp_path / "backend" / "backlog.md"
         backlog.write_text("### Codex Task: Hyphen\n")
         tl.update_task_tracker(
-            "Hyphen-Child",
-            "context",
-            "✅ Done",
-            "Codex",
-            "notes",
+            tl.TaskLogEntry(
+                task_name="Hyphen-Child",
+                phase="context",
+                status="✅ Done",
+                description="notes",
+            )
         )
         assert backlog.read_text().strip() == ""
 
