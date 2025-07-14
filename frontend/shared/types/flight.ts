@@ -14,3 +14,8 @@ export interface FlightRow {
    */
   y_class: number;
 }
+
+export interface RowError {
+  num_vol: string; // or unique row identifier
+  message: string;
+}
