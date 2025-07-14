@@ -3,7 +3,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { ModeSelector, Mode, Category } from "./ModeSelector";
+import { ModeSelector, Mode } from "./ModeSelector";
 import { UploadBox } from "./UploadBox";
 import { usePythonSubprocess } from "../shared/hooks/usePythonSubprocess";
 import { FlightRow } from "../shared/types/flight";
@@ -44,7 +44,6 @@ const rows: FlightRow[] = [
 
 const TestScreen: React.FC = () => {
   const [mode, setMode] = React.useState<Mode>(Mode.PRECOMMANDES);
-  const [category, setCategory] = React.useState<Category>(Category.SALON);
   const [data, setData] = React.useState<FlightRow[] | null>(null);
   const [error, setError] = React.useState(false);
   const run = usePythonSubprocess();
@@ -53,7 +52,6 @@ const TestScreen: React.FC = () => {
     try {
       const { exitCode, stderr } = await run("in.xls", "out.json", {
         mode,
-        category,
       });
       if (exitCode !== 0) throw new Error(stderr);
       const text = await readFile("out.json", "utf8");
@@ -67,10 +65,8 @@ const TestScreen: React.FC = () => {
     <div>
       <ModeSelector
         mode={mode}
-        category={category}
-        onChange={(m, c) => {
+        onChange={(m) => {
           setMode(m);
-          setCategory(c);
         }}
       />
       <UploadBox onUpload={handleUpload} />
@@ -87,9 +83,6 @@ test.skip("ipc flow renders rows", async () => {
   render(<TestScreen />);
   await userEvent.click(
     screen.getByRole("button", { name: /Commandes Définitives/i }),
-  );
-  await userEvent.click(
-    screen.getByRole("button", { name: /Prestations à Bord/i }),
   );
   const input = screen.getByTestId("file-input");
   await userEvent.upload(input, createFile("test.xls"));

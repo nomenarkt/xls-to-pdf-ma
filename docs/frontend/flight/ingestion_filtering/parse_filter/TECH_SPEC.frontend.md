@@ -12,11 +12,11 @@ This document defines the technical implementation for the frontend bridge and U
 
 | Module                                    | Purpose                                                    |
 | ----------------------------------------- | ---------------------------------------------------------- |
-| `UploadBox.tsx`                           | File drop zone and mode/category UI                        |
+| `UploadBox.tsx`                           | File drop zone and mode UI                                 |
 | `useProcessXLS.ts`                        | Frontend hook for invoking IPC bridge and validation       |
 | `usePythonSubprocess.ts`                  | IPC bridge for Python spawn process                        |
 | `FlightTable.tsx`                         | Tabular rendering of parsed data and editable class fields |
-| `AppContext.tsx`                          | Global state (mode, category, flightRows, file)            |
+| `AppContext.tsx`                          | Global state (mode, flightRows, file)                      |
 | `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error            |
 | `useUploadFlow.ts`                        | Orchestrates file upload through subprocess parsing        |
 
@@ -32,7 +32,6 @@ interface XLSRequest {
   outputFilePath: string;
   filters: {
     mode: "arrivee" | "depart";
-    category: "commercial" | "militaire";
   };
 }
 ```
@@ -60,7 +59,7 @@ Editable fields `jc` and `yc` are managed locally. For seat-class validation rul
 
 ## ♻️ Flow
 
-1. **UploadBox.tsx**: Accepts `.xls` file + user inputs (`mode`, `category`).
+1. **UploadBox.tsx**: Accepts `.xls` file + user input (`mode`).
 2. **useProcessXLS.ts**: Validates inputs, invokes `usePythonSubprocess()`.
 3. **usePythonSubprocess.ts**:
    - Spawns Python subprocess via Tauri or Node bridge.
@@ -84,7 +83,7 @@ Editable fields `jc` and `yc` are managed locally. For seat-class validation rul
 
 ### Enum Guard
 
-Both `mode` and `category` undergo runtime validation before IPC is invoked:
+`mode` undergoes runtime validation before IPC is invoked:
 
 ```ts
 if (!["depart", "arrivee"].includes(mode)) throw new Error("Invalid mode");
@@ -119,13 +118,13 @@ const FlightRowSchema = z.object({
 
 ## 🧪 Tests
 
-| File                             | Tests                                                          |
-| -------------------------------- | -------------------------------------------------------------- |
-| `useProcessXLS.test.ts`          | Valid mode/category propagation, parse success, fallback error |
-| `usePythonSubprocess.test.ts`    | `.on('error')`, `.on('close')`, bad output file, invalid JSON  |
-| `UploadBox.integration.test.tsx` | Upload, mode/category selection, IPC output table rendering    |
-| `FlightTable.test.tsx`           | Seat class validation (0-99), editable fields                  |
-| `useUploadFlow.test.ts`          | Upload → parse → edit flow, edit state reconciliation          |
+| File                             | Tests                                                         |
+| -------------------------------- | ------------------------------------------------------------- |
+| `useProcessXLS.test.ts`          | Valid mode propagation, parse success, fallback error         |
+| `usePythonSubprocess.test.ts`    | `.on('error')`, `.on('close')`, bad output file, invalid JSON |
+| `UploadBox.integration.test.tsx` | Upload, mode selection, IPC output table rendering            |
+| `FlightTable.test.tsx`           | Seat class validation (0-99), editable fields                 |
+| `useUploadFlow.test.ts`          | Upload → parse → edit flow, edit state reconciliation         |
 
 ---
 

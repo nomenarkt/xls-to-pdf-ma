@@ -1,10 +1,9 @@
 import { spawn } from "child_process";
-import { Mode, Category } from "../../components/ModeSelector";
+import { Mode } from "../../components/ModeSelector";
 import { buildPythonErrorMessage } from "./buildPythonErrorMessage";
 
 export interface PythonFilters {
   mode: Mode;
-  category: Category;
 }
 
 /**
@@ -29,9 +28,6 @@ export function usePythonSubprocess(debugMode = false) {
     if (!Object.values(Mode).includes(filters.mode)) {
       throw new Error(`Invalid mode: ${filters.mode}`);
     }
-    if (!Object.values(Category).includes(filters.category)) {
-      throw new Error(`Invalid category: ${filters.category}`);
-    }
 
     return new Promise((resolve, reject) => {
       const proc = spawn("python", [
@@ -42,8 +38,6 @@ export function usePythonSubprocess(debugMode = false) {
         outputFile,
         "--mode",
         filters.mode,
-        "--category",
-        filters.category,
       ]);
 
       let stderr = "";
