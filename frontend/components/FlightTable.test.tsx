@@ -5,16 +5,6 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { FlightTable } from "./FlightTable";
 import { FlightRow, RowError } from "../shared/types/flight";
-import { useEditFlightRow } from "../shared/hooks/useEditFlightRow";
-
-jest.mock("../shared/hooks/useEditFlightRow");
-
-const mutateMock = jest.fn();
-(useEditFlightRow as jest.Mock).mockReturnValue({
-  mutate: mutateMock,
-  isLoading: false,
-  error: null,
-});
 
 describe("FlightTable", () => {
   const baseRow: FlightRow = {
@@ -41,17 +31,12 @@ describe("FlightTable", () => {
     expect(inputs).toHaveLength(2);
   });
 
-  test("onEdit called after PATCH", async () => {
+  test("onEdit called after change", async () => {
     const handle = jest.fn();
-    mutateMock.mockResolvedValue({ ...baseRow, jc: 5 });
     render(<FlightTable data={[baseRow]} errors={[]} onEdit={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
     await userEvent.clear(input);
     await userEvent.type(input, "5");
-    expect(mutateMock).toHaveBeenCalledWith({
-      ...baseRow,
-      jc: 5,
-    });
     expect(handle).toHaveBeenCalledWith({ ...baseRow, jc: 5 });
   });
 
@@ -82,7 +67,6 @@ describe("FlightTable", () => {
 
   test("valid input clears error", async () => {
     const handle = jest.fn();
-    mutateMock.mockResolvedValue({ ...baseRow, jc: 23 });
     render(<FlightTable data={[baseRow]} errors={[]} onEdit={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
     await userEvent.clear(input);
