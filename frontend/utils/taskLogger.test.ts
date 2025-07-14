@@ -33,7 +33,7 @@ test("prefixes task with parent name", async () => {
   );
   const logPath = path.join(tmp, "codex_task_tracker.md");
   const content = fs.readFileSync(logPath, "utf8");
-  expect(content).toContain("Parent – Child");
+  expect(content).toContain("Parent > Child");
 });
 
 test("cleanBacklog removes prefixed tasks", async () => {

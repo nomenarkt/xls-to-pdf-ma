@@ -68,8 +68,8 @@ def update_task_tracker(
     """Append or update a task entry in codex_task_tracker.md."""
     task_name = entry.task_name
     parent = parent_task_name or ""
-    if parent and not task_name.startswith(f"{parent} – "):
-        task_name = f"{parent} – {task_name}"
+    if parent and not task_name.startswith(f"{parent} > "):
+        task_name = f"{parent} > {task_name}"
     entry.task_name = task_name
 
     base = resolve_base_dir()
@@ -134,8 +134,12 @@ def parse_done_tasks() -> set[str]:
             status = fields[4]
             if status == "✅ Done":
                 tasks.add(name)
-                trimmed = re.split(r"[\u2013-]", name, 1)[0].strip()
-                if trimmed and trimmed != name:
+                task_base = name
+                if ">" in name:
+                    task_base = name.split(">", 1)[0].strip()
+                    tasks.add(task_base)
+                trimmed = re.split(r"[\u2013-]", task_base, 1)[0].strip()
+                if trimmed and trimmed != task_base:
                     tasks.add(trimmed)
     return tasks
 
@@ -148,8 +152,12 @@ def clean_backlog() -> None:
     done_normalized: set[str] = set()
     for name in done:
         done_normalized.add(name)
-        trimmed = re.split(r"[\u2013-]", name, 1)[0].strip()
-        if trimmed and trimmed != name:
+        task_base = name
+        if ">" in name:
+            task_base = name.split(">", 1)[0].strip()
+            done_normalized.add(task_base)
+        trimmed = re.split(r"[\u2013-]", task_base, 1)[0].strip()
+        if trimmed and trimmed != task_base:
             done_normalized.add(trimmed)
 
     backlog_path = base / BACKLOG_FILE

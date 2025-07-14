@@ -26,8 +26,8 @@ export async function updateTaskTracker(
   parentTaskName?: string,
 ): Promise<void> {
   let taskName = entry.taskName;
-  if (parentTaskName && !taskName.startsWith(`${parentTaskName} – `)) {
-    taskName = `${parentTaskName} – ${taskName}`;
+  if (parentTaskName && !taskName.startsWith(`${parentTaskName} > `)) {
+    taskName = `${parentTaskName} > ${taskName}`;
   }
   entry.taskName = taskName;
 
@@ -89,8 +89,13 @@ export async function cleanBacklog(): Promise<void> {
   const doneNormalized = new Set<string>();
   for (const name of doneTasks) {
     doneNormalized.add(name);
-    const trimmed = name.split(/[\u2013-]/, 1)[0].trim();
-    if (trimmed && trimmed !== name) {
+    let base = name;
+    if (name.includes('>')) {
+      base = name.split('>', 1)[0].trim();
+      doneNormalized.add(base);
+    }
+    const trimmed = base.split(/[\u2013-]/, 1)[0].trim();
+    if (trimmed && trimmed !== base) {
       doneNormalized.add(trimmed);
     }
   }
