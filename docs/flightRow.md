@@ -13,14 +13,14 @@ export interface FlightRow {
   imma: string;
   sd_loc: string;
   sa_loc: string;
-  j_class: number;
-  y_class: number;
+  jc: number;
+  yc: number;
 }
 ```
 
 ## Editable Fields
 
-Only `j_class` and `y_class` are editable in the browser. All other fields are read-only values parsed from the `.xls` source.
+Only `jc` and `yc` are editable in the browser. All other fields are read-only values parsed from the `.xls` source.
 
 ### Seat Class Rules
 
@@ -33,14 +33,14 @@ Only `j_class` and `y_class` are editable in the browser. All other fields are r
 ## Column Mapping
 
 | Interface Field | Table Heading | Editable |
-| --------------- | ------------ | -------- |
-| `num_vol`       | Num Vol      | No       |
-| `depart`        | Départ       | No       |
-| `arrivee`       | Arrivée      | No       |
-| `imma`          | Imma         | No       |
-| `sd_loc`        | SD LOC       | No       |
-| `sa_loc`        | SA LOC       | No       |
-| `j_class`       | J/C          | Yes      |
-| `y_class`       | Y/C          | Yes      |
+| --------------- | ------------- | -------- |
+| `num_vol`       | Num Vol       | No       |
+| `depart`        | Départ        | No       |
+| `arrivee`       | Arrivée       | No       |
+| `imma`          | Imma          | No       |
+| `sd_loc`        | SD LOC        | No       |
+| `sa_loc`        | SA LOC        | No       |
+| `jc`            | J/C           | Yes      |
+| `yc`            | Y/C           | Yes      |
 
 When new fields are introduced by the backend, extend the interface and table accordingly. Optional fields should use `?` in the TypeScript definition.

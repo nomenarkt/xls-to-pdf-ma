@@ -8,11 +8,11 @@ export interface FlightRow {
   /**
    * Number of J class seats. Defaults to 0 when a row is created.
    */
-  j_class: number;
+  jc: number;
   /**
    * Number of Y class seats. Defaults to 0 when a row is created.
    */
-  y_class: number;
+  yc: number;
 }
 
 export interface RowError {

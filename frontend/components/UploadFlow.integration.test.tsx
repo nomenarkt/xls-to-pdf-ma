@@ -30,8 +30,8 @@ const rows: FlightRow[] = [
     imma: "A320",
     sd_loc: "A",
     sa_loc: "B",
-    j_class: 0,
-    y_class: 0,
+    jc: 0,
+    yc: 0,
   },
 ];
 
