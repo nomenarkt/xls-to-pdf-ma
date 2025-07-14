@@ -8,6 +8,15 @@ const TASK_LOG_FILE = "codex_task_tracker.md";
 const BACKLOG_FILE = "frontend/backlog.md";
 const CONTEXT = "frontend";
 
+function normalizeDashes(text: string): string {
+  return text.replace(/[\u2013\u2014]/g, "-");
+}
+
+export function extractTaskTitle(line: string): string | null {
+  const match = line.match(/codex task:\s*`?([^`]+)`?/i);
+  return match ? normalizeDashes(match[1].trim()) : null;
+}
+
 export interface TaskLogEntry {
   taskName: string;
   phase: string;
@@ -88,13 +97,14 @@ export async function cleanBacklog(): Promise<void> {
   const doneTasks = await parseDoneTasks();
   const doneNormalized = new Set<string>();
   for (const name of doneTasks) {
-    doneNormalized.add(name);
-    let base = name;
-    if (name.includes('>')) {
-      base = name.split('>', 1)[0].trim();
+    const normalized = normalizeDashes(name);
+    doneNormalized.add(normalized);
+    let base = normalized;
+    if (normalized.includes('>')) {
+      base = normalized.split('>', 1)[0].trim();
       doneNormalized.add(base);
     }
-    const trimmed = base.split(/[\u2013-]/, 1)[0].trim();
+    const trimmed = base.split('-', 1)[0].trim();
     if (trimmed && trimmed !== base) {
       doneNormalized.add(trimmed);
     }
@@ -105,21 +115,17 @@ export async function cleanBacklog(): Promise<void> {
   const result: string[] = [];
 
   let skip = false;
-  const headingRegex = /^.*Codex Task:/i;
-
   for (const line of lines) {
-    const trimmed = line.trim();
-    if (headingRegex.test(trimmed)) {
-      const idx = trimmed.toLowerCase().indexOf("codex task:");
-      let taskName = trimmed.slice(idx + "codex task:".length).trim();
-      if (taskName.startsWith("`") && taskName.endsWith("`")) {
-        taskName = taskName.slice(1, -1);
+    const title = extractTaskTitle(line);
+    if (title) {
+      skip = doneNormalized.has(title);
+      if (skip) {
+        continue;
       }
-      taskName = taskName.replace("\u2013", "-");
-      skip = doneNormalized.has(taskName);
-      if (skip) continue;
     }
-    if (!skip) result.push(line);
+    if (!skip) {
+      result.push(line);
+    }
   }
 
   const cleaned = result.join("\n") + (content.endsWith("\n") ? "\n" : "");
@@ -140,10 +146,15 @@ export async function parseDoneTasks(): Promise<Set<string>> {
       const fields = line.split("|").map((f) => f.trim());
       if (fields.length < 14) continue;
       if (fields[4] === "✅ Done") {
-        const name = fields[2];
+        const name = normalizeDashes(fields[2].trim());
         tasks.add(name);
-        const trimmed = name.split(/[\u2013-]/, 1)[0].trim();
-        if (trimmed && trimmed !== name) {
+        let base = name;
+        if (name.includes('>')) {
+          base = name.split('>', 1)[0].trim();
+          tasks.add(base);
+        }
+        const trimmed = base.split('-', 1)[0].trim();
+        if (trimmed && trimmed !== base) {
           tasks.add(trimmed);
         }
       }
