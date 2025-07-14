@@ -84,7 +84,7 @@ async function hasDuplicateTask(taskName: string): Promise<boolean> {
   }
 }
 
-async function cleanBacklog(): Promise<void> {
+export async function cleanBacklog(): Promise<void> {
   const doneTasks = await parseDoneTasks();
   const doneNormalized = new Set<string>();
   for (const name of doneTasks) {
@@ -106,7 +106,11 @@ async function cleanBacklog(): Promise<void> {
     const trimmed = line.trim();
     if (headingRegex.test(trimmed)) {
       const idx = trimmed.toLowerCase().indexOf("codex task:");
-      const taskName = trimmed.slice(idx + "codex task:".length).trim();
+      let taskName = trimmed.slice(idx + "codex task:".length).trim();
+      if (taskName.startsWith("`") && taskName.endsWith("`")) {
+        taskName = taskName.slice(1, -1);
+      }
+      taskName = taskName.replace("\u2013", "-");
       skip = doneNormalized.has(taskName);
       if (skip) continue;
     }
@@ -119,7 +123,7 @@ async function cleanBacklog(): Promise<void> {
   }
 }
 
-async function parseDoneTasks(): Promise<Set<string>> {
+export async function parseDoneTasks(): Promise<Set<string>> {
   const logPath = path.join(BASE_DIR, TASK_LOG_FILE);
   const tasks = new Set<string>();
 
