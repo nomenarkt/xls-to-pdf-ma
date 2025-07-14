@@ -72,6 +72,18 @@ Copy `.env.sample` to `.env` and adjust these values as needed.
 
 ---
 
+### CLI Usage
+
+Run the Python parser directly to output a JSON file:
+
+```bash
+python cli/main.py --input flights.xls --output flights.json --mode commandes --category salon
+```
+
+The JSON format matches the object array consumed by `usePythonSubprocess`.
+
+---
+
 ## 🛠 Tech Stack
 
 | Layer       | Tech                    |
