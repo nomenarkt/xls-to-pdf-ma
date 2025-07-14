@@ -48,3 +48,4 @@
 | backend | JC/YC capacity clamp | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | clamp seat counts per immatriculation | pass | 2025-07-14 | 2025-07-14 |
 | backend | Return leg class boost | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | increment jc/yc for return legs | pass | 2025-07-14 | 2025-07-14 |
 | backend | Return leg clamp enforcement | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | clamp after boosts with min(value, max_capacity) | pass | 2025-07-14 | 2025-07-14 |
+| backend | XLS header helper | tests | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | Test Utilities | add assert_true_xls helper and update tests | pass | 2025-07-14 | 2025-07-14 |

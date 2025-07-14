@@ -4,13 +4,15 @@ import sys
 from datetime import date, datetime
 from importlib import util
 from io import BytesIO
-import xlwt
 from pathlib import Path
 from typing import Any
 
 import pytest
+import xlwt
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
+
+from .xls_helper import assert_true_xls
 
 MODULE_PATH = Path(__file__).parents[1] / "delivery" / "api_routes.py"
 ROOT = Path(__file__).parents[2]
@@ -43,6 +45,7 @@ def _make_xls(rows: list[dict]) -> BytesIO:
     buffer = BytesIO()
     workbook.save(buffer)
     buffer.seek(0)
+    assert_true_xls(buffer)
     return buffer
 
 
