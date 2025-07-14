@@ -41,6 +41,7 @@ def _setup_files(tmp_path: Path) -> None:
         "prefix_behavior",
         "hyphen_cleanup",
         "dash_normalization",
+        "task_number_heading",
     ],
 )
 def test_task_logger(tmp_path: Path, scenario: str) -> None:
@@ -144,6 +145,19 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
             )
             f.write(row)
         tl.clean_backlog()
+        assert backlog.read_text().strip() == ""
+
+    elif scenario == "task_number_heading":
+        backlog = tmp_path / "backend" / "backlog.md"
+        backlog.write_text("### Task 3: Numbered\n")
+        tl.update_task_tracker(
+            tl.TaskLogEntry(
+                task_name="Numbered",
+                phase="context",
+                status="✅ Done",
+                description="notes",
+            )
+        )
         assert backlog.read_text().strip() == ""
 
     tl.BASE_DIR = ""

@@ -21,8 +21,15 @@ def normalize_dashes(text: str) -> str:
 
 
 def extract_task_title(line: str) -> str | None:
-    match = re.search(r"codex task:\s*`?([^`]+)`?", line, re.IGNORECASE)
-    return normalize_dashes(match.group(1).strip()) if match else None
+    match = re.search(
+        r"(?:codex task:\s*`?([^`]+)`?|task\s+\d+:\s*`?([^`]+)`?)",
+        line,
+        re.IGNORECASE,
+    )
+    if not match:
+        return None
+    title = match.group(1) or match.group(2)
+    return normalize_dashes(title.strip()) if title else None
 
 
 @dataclass
