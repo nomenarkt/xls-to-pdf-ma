@@ -11,6 +11,8 @@ import xlwt
 
 from backend.domain import FlightRow
 
+from .xls_helper import assert_true_xls
+
 MODULE_PATH = Path(__file__).parents[1] / "repository" / "xls_parser.py"
 spec = util.spec_from_file_location("xls_parser", MODULE_PATH)
 assert spec and spec.loader
@@ -37,6 +39,7 @@ def _make_xls(rows: list[dict]) -> BytesIO:
     buffer = BytesIO()
     workbook.save(buffer)
     buffer.seek(0)
+    assert_true_xls(buffer)
     return buffer
 
 
