@@ -138,9 +138,11 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
         backlog = tmp_path / "backend" / "backlog.md"
         backlog.write_text("### Codex Task: `Dash – Test`\n")
         with (tmp_path / "codex_task_tracker.md").open("a") as f:
-            f.write(
-                "| backend | Dash - Test | context | ✅ Done | - | - | - | - | - | - | - | 2025-01-01 | 2025-01-01 |\n"
+            row = (
+                "| backend | Dash - Test | context | ✅ Done | - | - | - | -"
+                " | - | - | 2025-01-01 | 2025-01-01 |\n"
             )
+            f.write(row)
         tl.clean_backlog()
         assert backlog.read_text().strip() == ""
 

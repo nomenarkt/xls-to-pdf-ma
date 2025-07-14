@@ -162,6 +162,46 @@ def test_pairing_sort_order() -> None:
     assert jc_yc[3][1:] == (0, 0)
 
 
+def test_return_leg_boost_special_airport() -> None:
+    today = date(2025, 7, 10)
+    rows = [
+        {
+            "Num Vol": "MD400",
+            "Départ": "SVB",
+            "Arrivée": "TNR",
+            "Imma": "5REJK",
+            "SD LOC": datetime(2025, 7, 11, 6, 0),
+            "SA LOC": datetime(2025, 7, 11, 8, 0),
+        }
+    ]
+    file_obj = _make_xls(rows)
+    result = parse_and_filter_xls(file_obj, "commandes", today)
+    assert len(result) == 1
+    r = result[0]
+    assert r.jc == 2
+    assert r.yc == 4
+
+
+def test_return_leg_boost_default_airport() -> None:
+    today = date(2025, 7, 10)
+    rows = [
+        {
+            "Num Vol": "MD401",
+            "Départ": "TLE",
+            "Arrivée": "TNR",
+            "Imma": "5REJK",
+            "SD LOC": datetime(2025, 7, 11, 12, 0),
+            "SA LOC": datetime(2025, 7, 11, 14, 0),
+        }
+    ]
+    file_obj = _make_xls(rows)
+    result = parse_and_filter_xls(file_obj, "commandes", today)
+    assert len(result) == 1
+    r = result[0]
+    assert r.jc == 2
+    assert r.yc == 2
+
+
 @pytest.mark.parametrize(
     "imma,jc_max,yc_max",
     [
