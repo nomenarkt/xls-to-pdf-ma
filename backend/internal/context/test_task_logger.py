@@ -118,7 +118,7 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
             ),
         )
         content = (tmp_path / "codex_task_tracker.md").read_text()
-        assert "Parent – Child" in content
+        assert "Parent > Child" in content
 
     elif scenario == "hyphen_cleanup":
         backlog = tmp_path / "backend" / "backlog.md"
