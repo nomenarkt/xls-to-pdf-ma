@@ -1,15 +1,27 @@
 import { useProcessXLS } from "./useProcessXLS";
-import axios from "../api/axios";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
+import { usePythonSubprocess } from "./usePythonSubprocess";
+import { writeFile } from "fs/promises";
+import path from "path";
+import { tmpdir } from "os";
 
-jest.mock("../api/axios");
+jest.mock("./usePythonSubprocess");
+jest.mock("fs/promises");
 
-const mockedPost = (axios as jest.Mocked<typeof axios>).post;
+const runMock = jest.fn();
+const writeFileMock = writeFile as unknown as jest.Mock;
 
 describe("useProcessXLS", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (usePythonSubprocess as jest.Mock).mockReturnValue(runMock);
+    writeFileMock.mockResolvedValue(undefined);
+    jest.spyOn(Date, "now").mockReturnValue(1);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("returns data on success", async () => {
@@ -25,20 +37,23 @@ describe("useProcessXLS", () => {
         y_class: 0,
       },
     ];
-    mockedPost.mockResolvedValue({ status: 200, data: rows });
+    runMock.mockResolvedValue(rows);
     const processXLS = useProcessXLS();
-    const result = await processXLS(
-      new File([], "f.xls"),
-      Mode.PRECOMMANDES,
-      Category.SALON,
-    );
+    const file = new File(["data"], "f.xls");
+    const result = await processXLS(file, Mode.PRECOMMANDES, Category.SALON);
+    const inputPath = path.join(tmpdir(), "input-1-f.xls");
+    const outputPath = path.join(tmpdir(), "output-1.json");
     expect(result).toEqual(rows);
-    expect(mockedPost).toHaveBeenCalledWith("/process", expect.any(FormData));
+    expect(writeFileMock).toHaveBeenCalledWith(inputPath, expect.any(Buffer));
+    expect(runMock).toHaveBeenCalledWith(inputPath, outputPath, {
+      mode: Mode.PRECOMMANDES,
+      category: Category.SALON,
+    });
   });
 
-  it("throws on http error", async () => {
+  it("throws on subprocess error", async () => {
     const error = new Error("bad");
-    mockedPost.mockRejectedValue(error);
+    runMock.mockRejectedValue(error);
     const processXLS = useProcessXLS();
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
@@ -50,7 +65,7 @@ describe("useProcessXLS", () => {
     await expect(
       processXLS(new File([], "f.xls"), "bad" as Mode, Category.SALON),
     ).rejects.toThrow("Invalid mode");
-    expect(mockedPost).not.toHaveBeenCalled();
+    expect(runMock).not.toHaveBeenCalled();
   });
 
   it("validates category", async () => {
@@ -58,6 +73,6 @@ describe("useProcessXLS", () => {
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, "bad" as Category),
     ).rejects.toThrow("Invalid category");
-    expect(mockedPost).not.toHaveBeenCalled();
+    expect(runMock).not.toHaveBeenCalled();
   });
 });

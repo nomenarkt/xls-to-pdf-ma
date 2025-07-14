@@ -1,6 +1,9 @@
-import axios from "../api/axios";
+import { writeFile } from "fs/promises";
+import { tmpdir } from "os";
+import path from "path";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
+import { usePythonSubprocess } from "./usePythonSubprocess";
 
 /**
  * Uploads an XLS file and retrieves parsed flight rows.
@@ -11,6 +14,7 @@ import { Mode, Category } from "../../components/ModeSelector";
  * ```
  */
 export function useProcessXLS() {
+  const run = usePythonSubprocess();
   return async (
     file: File,
     mode: Mode,
@@ -22,15 +26,14 @@ export function useProcessXLS() {
     if (!Object.values(Category).includes(category)) {
       throw new Error(`Invalid category: ${category}`);
     }
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("mode", mode);
-    formData.append("category", category);
-    try {
-      const res = await axios.post<FlightRow[]>("/process", formData);
-      return res.data;
-    } catch (err) {
-      throw err;
-    }
+
+    const timestamp = Date.now();
+    const inputPath = path.join(tmpdir(), `input-${timestamp}-${file.name}`);
+    const outputPath = path.join(tmpdir(), `output-${timestamp}.json`);
+
+    const buffer = await file.arrayBuffer();
+    await writeFile(inputPath, Buffer.from(buffer));
+
+    return run(inputPath, outputPath, { mode, category });
   };
 }
