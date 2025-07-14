@@ -34,7 +34,7 @@ export interface PythonFilters {
  * `y_class`.
  *
  * For the full structure see
- * `/docs/frontend/epic/1.Flight File Ingestion and Filtering/IPC Bridge/TECH_SPEC.md`.
+ * `/docs/frontend/flight/ingestion_filtering/parse_filter/TECH_SPEC.frontend.md`.
  */
 export function usePythonSubprocess() {
   return async (
