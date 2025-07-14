@@ -52,6 +52,8 @@ type FlightRow = {
 
 Returned as a `FlightRow[]` via file contents at `outputFilePath`.
 
+For editable column details and seat-class rules, see [docs/flightRow.md](../../../../flightRow.md).
+
 ---
 
 ## 🔄 Flow
