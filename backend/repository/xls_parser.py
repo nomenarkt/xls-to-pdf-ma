@@ -62,6 +62,8 @@ def parse_and_filter_xls(
     for _, row in ordered_df.iterrows():
         jc = 0
         yc = 0
+        jc_max, yc_max = CAPACITY_LIMITS.get(row["Imma"], (99, 99))
+
         if mode == "commandes" and row["Arrivée"] == "TNR":
             if row["Départ"] in {"SVB", "DIE", "NOS"}:
                 jc += 2
@@ -70,7 +72,6 @@ def parse_and_filter_xls(
                 jc += 2
                 yc += 2
 
-        jc_max, yc_max = CAPACITY_LIMITS.get(row["Imma"], (99, 99))
         jc = min(jc, jc_max)
         yc = min(yc, yc_max)
 
