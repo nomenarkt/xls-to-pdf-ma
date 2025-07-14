@@ -69,7 +69,7 @@ const TestScreen: React.FC = () => {
         }}
       />
       <UploadBox onUpload={handleUpload} />
-      {data && <FlightTable rows={data} onChange={() => {}} />}
+      {data && <FlightTable data={data} errors={[]} onEdit={() => {}} />}
       {error && <p role="alert">Failed</p>}
     </div>
   );

@@ -42,3 +42,4 @@
 | backend | Annotate process route | delivery | ✅ Done | delivery | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | add OpenAPI response model, summary, description | pass | 2025-07-13 | 2025-07-13 |
 | backend | Replace openpyxl writer in tests | tests | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | use xlwt writer; assert jc/yc defaults | pass | 2025-07-13 | 2025-07-13 |
 | frontend | Export cleanBacklog for backlog maintenance | context | ✅ Done | - | - | - | - | - | export cleanBacklog and fix quoting | pass | 2025-07-14 | 2025-07-14 |
+| frontend | Flight Table UI – FlightTable | ui | ✅ Done | ui | flight | parse_filter | Flight Parsing Flow | Table View Renderer | refactor with patch hook + row errors | pass | 2025-07-14 | 2025-07-14 |

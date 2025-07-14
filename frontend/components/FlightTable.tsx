@@ -1,13 +1,21 @@
 import React from "react";
-import { FlightRow } from "../shared/types/flight";
+import clsx from "clsx";
+import { FlightRow, RowError } from "../shared/types/flight";
 import { useSeatClassInput } from "../shared/hooks/useSeatClassInput";
+import { useEditFlightRow } from "../shared/hooks/useEditFlightRow";
 
 export interface FlightTableProps {
-  rows: FlightRow[];
-  onChange: (updatedRow: FlightRow) => void;
+  data: FlightRow[];
+  errors: RowError[];
+  onEdit: (updatedRow: FlightRow) => void;
 }
 
-export const FlightTable: React.FC<FlightTableProps> = ({ rows, onChange }) => {
+export const FlightTable: React.FC<FlightTableProps> = ({
+  data,
+  errors,
+  onEdit,
+}) => {
+  const { mutate } = useEditFlightRow();
   const SeatInput: React.FC<{
     value: number;
     onValid: (val: number) => void;
@@ -57,30 +65,56 @@ export const FlightTable: React.FC<FlightTableProps> = ({ rows, onChange }) => {
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => (
-            <tr key={r.num_vol} className="odd:bg-white even:bg-gray-50">
-              <td className="px-2 py-1">{r.num_vol}</td>
-              <td className="px-2 py-1">{r.depart}</td>
-              <td className="px-2 py-1">{r.arrivee}</td>
-              <td className="px-2 py-1">{r.imma}</td>
-              <td className="px-2 py-1">{r.sd_loc}</td>
-              <td className="px-2 py-1">{r.sa_loc}</td>
-              <td className="px-2 py-1">
-                <SeatInput
-                  value={r.j_class ?? 0}
-                  onValid={(val) => onChange({ ...r, j_class: val })}
-                  label={`J class for ${r.num_vol}`}
-                />
-              </td>
-              <td className="px-2 py-1">
-                <SeatInput
-                  value={r.y_class ?? 0}
-                  onValid={(val) => onChange({ ...r, y_class: val })}
-                  label={`Y class for ${r.num_vol}`}
-                />
-              </td>
-            </tr>
-          ))}
+          {data.map((r) => {
+            const hasError = errors.some((e) => e.num_vol === r.num_vol);
+            return (
+              <tr
+                key={r.num_vol}
+                className={clsx(
+                  "odd:bg-white even:bg-gray-50",
+                  hasError && "bg-red-50",
+                )}
+              >
+                <td className="px-2 py-1">
+                  {r.num_vol}
+                  {hasError && (
+                    <span
+                      role="status"
+                      aria-label="error"
+                      className="ml-1 text-red-600"
+                    >
+                      !
+                    </span>
+                  )}
+                </td>
+                <td className="px-2 py-1">{r.depart}</td>
+                <td className="px-2 py-1">{r.arrivee}</td>
+                <td className="px-2 py-1">{r.imma}</td>
+                <td className="px-2 py-1">{r.sd_loc}</td>
+                <td className="px-2 py-1">{r.sa_loc}</td>
+                <td className="px-2 py-1">
+                  <SeatInput
+                    value={r.j_class ?? 0}
+                    onValid={async (val) => {
+                      const patched = await mutate({ ...r, j_class: val });
+                      onEdit(patched);
+                    }}
+                    label={`J class for ${r.num_vol}`}
+                  />
+                </td>
+                <td className="px-2 py-1">
+                  <SeatInput
+                    value={r.y_class ?? 0}
+                    onValid={async (val) => {
+                      const patched = await mutate({ ...r, y_class: val });
+                      onEdit(patched);
+                    }}
+                    label={`Y class for ${r.num_vol}`}
+                  />
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
