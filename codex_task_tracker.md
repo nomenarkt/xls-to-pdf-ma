@@ -15,7 +15,7 @@
 | frontend | Update frontend task logger | context | ✅ Done | - | - | - | - | - | switched to codex_task_tracker.md | - | 2025-07-11 | 2025-07-11 |
 | frontend | Add jest-environment-jsdom | context | ✅ Done | - | - | - | - | - | added dev dependency | - | 2025-07-11 | 2025-07-11 |
 | frontend | Mode/Category Toggle - ModeSelector | ui | ✅ Done | - | - | ModeSelector.tsx | XLS Upload UX | ModeSelector Component | implemented ModeSelector with tests | - | 2025-07-11 | 2025-07-11 |
-| frontend | Parse XLS Hook - useProcessXLS() | hooks | ✅ Done | - | - | useProcessXLS.ts | Flight File Ingestion & Filtering | XLS Filtering Logic | implemented useProcessXLS and tests | - | 2025-07-11 | 2025-07-11 |
+| frontend | Parse XLS Hook - useProcessXLS() | hooks | ✅ Done | - | - | useProcessXLS.ts | Flight File Ingestion & Filtering | XLS Filtering Logic | refactored to usePythonSubprocess | pass | 2025-07-11 | 2025-07-13 |
 | frontend | Fix safer-buffer dependency for npm tests | context | ✅ Done | - | - | - | - | - | added safer-buffer dependency | - | 2025-07-11 | 2025-07-11 |
 | frontend | Integration Test – UploadBox + ModeSelector + useProcessXLS | ui | ✅ Done | - | - | UploadFlow.integration.test.tsx | XLS Upload UX | Integrated Upload Flow | integration test added | - | 2025-07-11 | 2025-07-11 |
 | frontend | Document FlightRow structure for editor UI | docs | ✅ Done | - | - | docs/flightRow.md | Flight File Ingestion & Filtering | Schema Definition | added J/C and Y/C docs | - | 2025-07-11 | 2025-07-11 |
