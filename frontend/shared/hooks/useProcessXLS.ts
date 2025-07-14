@@ -3,11 +3,8 @@ import { tmpdir } from "os";
 import path from "path";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
-import {
-  usePythonSubprocess,
-  buildPythonErrorMessage,
-  PythonSubprocessResult,
-} from "./usePythonSubprocess";
+import { usePythonSubprocess, PythonSubprocessResult } from "./usePythonSubprocess";
+import { buildPythonErrorMessage } from "./buildPythonErrorMessage";
 
 /**
  * Uploads an XLS file and retrieves parsed flight rows.

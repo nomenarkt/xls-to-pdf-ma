@@ -44,3 +44,4 @@
 | frontend | Export cleanBacklog for backlog maintenance | context | ✅ Done | - | - | - | - | - | export cleanBacklog and fix quoting | pass | 2025-07-14 | 2025-07-14 |
 | frontend | Flight Table UI – FlightTable | ui | ✅ Done | ui | flight | parse_filter | Flight Parsing Flow | Table View Renderer | refactor with patch hook + row errors | pass | 2025-07-14 | 2025-07-14 |
 | frontend | usePythonSubprocess return object | hooks | ✅ Done | - | flight | parse_filter | Flight Parsing Flow | IPC Integration | promise resolves with stdout/stderr and exit code; update useProcessXLS | pass | 2025-07-14 | 2025-07-14 |
+| frontend | Debug subprocess error messages | hooks | ✅ Done | - | flight | parse_filter | Flight Parsing Flow | IPC Error Debug Mode | show stderr only in debugMode; extract helper | pass | 2025-07-14 | 2025-07-14 |
