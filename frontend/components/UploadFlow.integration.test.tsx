@@ -69,7 +69,7 @@ const TestScreen: React.FC = () => {
 };
 
 test.skip("valid flow renders rows", async () => {
-  runMock.mockResolvedValue(rows);
+  runMock.mockResolvedValue({ stdout: "", stderr: "", exitCode: 0 });
   render(<TestScreen />);
   await userEvent.click(
     screen.getByRole("button", { name: /Commandes Définitives/i }),

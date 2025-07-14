@@ -2,21 +2,31 @@ import { useProcessXLS } from "./useProcessXLS";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
 import { usePythonSubprocess } from "./usePythonSubprocess";
-import { writeFile } from "fs/promises";
+import { writeFile, readFile } from "fs/promises";
 import path from "path";
 import { tmpdir } from "os";
 
-jest.mock("./usePythonSubprocess");
+jest.mock("./usePythonSubprocess", () => {
+  const actual = jest.requireActual("./usePythonSubprocess");
+  return {
+    __esModule: true,
+    usePythonSubprocess: jest.fn(),
+    buildPythonErrorMessage: actual.buildPythonErrorMessage,
+    PythonSubprocessResult: actual.PythonSubprocessResult,
+  };
+});
 jest.mock("fs/promises");
 
 const runMock = jest.fn();
 const writeFileMock = writeFile as unknown as jest.Mock;
+const readFileMock = readFile as unknown as jest.Mock;
 
 describe("useProcessXLS", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (usePythonSubprocess as jest.Mock).mockReturnValue(runMock);
     writeFileMock.mockResolvedValue(undefined);
+    readFileMock.mockResolvedValue("[]");
     jest.spyOn(Date, "now").mockReturnValue(1);
   });
 
@@ -37,7 +47,8 @@ describe("useProcessXLS", () => {
         y_class: 0,
       },
     ];
-    runMock.mockResolvedValue(rows);
+    runMock.mockResolvedValue({ stdout: "", stderr: "", exitCode: 0 });
+    readFileMock.mockResolvedValue(JSON.stringify(rows));
     const processXLS = useProcessXLS();
     const file = new File(["data"], "f.xls");
     const result = await processXLS(file, Mode.PRECOMMANDES, Category.SALON);
@@ -58,6 +69,27 @@ describe("useProcessXLS", () => {
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
     ).rejects.toBe(error);
+  });
+
+  it("throws when exit code is non-zero", async () => {
+    runMock.mockResolvedValue({ stdout: "", stderr: "bad", exitCode: 1 });
+    const processXLS = useProcessXLS();
+    await expect(
+      processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
+    ).rejects.toThrow(
+      "Python subprocess failed to parse XLS: bad: exit code 1",
+    );
+  });
+
+  it("throws when JSON is invalid", async () => {
+    runMock.mockResolvedValue({ stdout: "", stderr: "", exitCode: 0 });
+    readFileMock.mockResolvedValue("not json");
+    const processXLS = useProcessXLS();
+    await expect(
+      processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
+    ).rejects.toThrow(
+      "Python subprocess failed to parse XLS: Invalid JSON output from Python process: exit code 0",
+    );
   });
 
   it("validates mode", async () => {

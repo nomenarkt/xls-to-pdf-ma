@@ -1,9 +1,7 @@
 import { spawn } from "child_process";
-import { readFile } from "fs/promises";
 import { Mode, Category } from "../../components/ModeSelector";
-import { FlightRow } from "../types/flight";
 
-function buildPythonErrorMessage(
+export function buildPythonErrorMessage(
   stderr: string,
   code?: number | null,
   hint = "Python subprocess failed to parse XLS",
@@ -25,23 +23,24 @@ export interface PythonFilters {
 }
 
 /**
- * Launches the Python processing script with the given filters and parses the
- * resulting data.
+ * Launches the Python processing script with the given filters.
  *
- * `outputFile` must contain a JSON array of {@link FlightRow} objects in the
- * following shape:
- * `num_vol`, `depart`, `arrivee`, `imma`, `sd_loc`, `sa_loc`, `j_class`,
- * `y_class`.
- *
- * For the full structure see
- * `/docs/frontend/flight/ingestion_filtering/parse_filter/TECH_SPEC.frontend.md`.
+ * The spawned CLI writes a JSON array to `outputFile`. Consumers are
+ * responsible for reading and parsing the file after the process exits.
+ * See `/docs/frontend/flight/ingestion_filtering/parse_filter/TECH_SPEC.frontend.md`.
  */
+export interface PythonSubprocessResult {
+  stdout: string;
+  stderr: string;
+  exitCode: number | null;
+}
+
 export function usePythonSubprocess() {
   return async (
     inputFile: string,
     outputFile: string,
     filters: PythonFilters,
-  ): Promise<FlightRow[]> => {
+  ): Promise<PythonSubprocessResult> => {
     if (!Object.values(Mode).includes(filters.mode)) {
       throw new Error(`Invalid mode: ${filters.mode}`);
     }
@@ -63,8 +62,12 @@ export function usePythonSubprocess() {
       ]);
 
       let stderr = "";
+      let stdout = "";
       proc.stderr.on("data", (d) => {
         stderr += String(d);
+      });
+      proc.stdout.on("data", (d) => {
+        stdout += String(d);
       });
 
       const timer = setTimeout(() => {
@@ -77,26 +80,9 @@ export function usePythonSubprocess() {
         reject(err);
       });
 
-      proc.on("close", async (code) => {
+      proc.on("close", (code) => {
         clearTimeout(timer);
-        if (code !== 0) {
-          reject(buildPythonErrorMessage(stderr, code));
-          return;
-        }
-        try {
-          const text = await readFile(outputFile, "utf8");
-          try {
-            const data = JSON.parse(text) as FlightRow[];
-            resolve(data);
-          } catch {
-            const message = stderr.trim()
-              ? stderr.trim()
-              : "Invalid JSON output from Python process";
-            reject(buildPythonErrorMessage(message, code));
-          }
-        } catch (err) {
-          reject(err);
-        }
+        resolve({ stdout, stderr, exitCode: code ?? null });
       });
     });
   };

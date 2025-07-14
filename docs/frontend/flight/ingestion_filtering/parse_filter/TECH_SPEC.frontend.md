@@ -1,6 +1,6 @@
-# TECH\_SPEC.frontend.md
+# TECH_SPEC.frontend.md
 
-📁 Path: docs/frontend/flight/ingestion\_filtering/parse\_filter/TECH\_SPEC.frontend.md
+📁 Path: docs/frontend/flight/ingestion_filtering/parse_filter/TECH_SPEC.frontend.md
 
 ## 🛍️ Overview
 
@@ -31,8 +31,8 @@ interface XLSRequest {
   inputFilePath: string;
   outputFilePath: string;
   filters: {
-    mode: 'arrivee' | 'depart';
-    category: 'commercial' | 'militaire';
+    mode: "arrivee" | "depart";
+    category: "commercial" | "militaire";
   };
 }
 ```
@@ -52,7 +52,7 @@ type FlightRow = {
 };
 ```
 
-Returned as a `FlightRow[]` via file contents at `outputFilePath`.
+The Python script writes a JSON array to `outputFilePath` for later parsing.
 
 Editable fields `j_class` and `y_class` are supported via backend PATCH to `/process`. For seat-class validation rules, see [docs/flightRow.md](../../../../flightRow.md).
 
@@ -63,20 +63,19 @@ Editable fields `j_class` and `y_class` are supported via backend PATCH to `/pro
 1. **UploadBox.tsx**: Accepts `.xls` file + user inputs (`mode`, `category`).
 2. **useProcessXLS.ts**: Validates inputs, invokes `usePythonSubprocess()`.
 3. **usePythonSubprocess.ts**:
+   - Spawns Python subprocess via Tauri or Node bridge.
+   - Monitors `stdout`, `stderr`, `.on('close')`.
+   - Resolves with `{ stdout, stderr, exitCode }` when the process closes.
 
-   * Spawns Python subprocess via Tauri or Node bridge.
-   * Monitors `stdout`, `stderr`, `.on('close')`.
-   * Reads output `.json` file path and returns `FlightRow[]`.
 4. **FlightTable.tsx**:
+   - Renders `FlightRow[]` with validation highlighting
+   - Provides inline editing of `j_class`, `y_class`
+   - Sends PATCH requests when locally edited
 
-   * Renders `FlightRow[]` with validation highlighting
-   * Provides inline editing of `j_class`, `y_class`
-   * Sends PATCH requests when locally edited
 5. **AppContext.tsx**: Shares state across UploadBox, Table, and PDF Export modules.
 6. **useUploadFlow\.ts**:
-
-   * Handles full chain: upload → subprocess → editable UI
-   * Tracks `editedRows`, triggers PATCH calls, reconciles state
+   - Handles full chain: upload → subprocess → editable UI
+   - Tracks `editedRows`, triggers PATCH calls, reconciles state
 
 ---
 
@@ -87,7 +86,7 @@ Editable fields `j_class` and `y_class` are supported via backend PATCH to `/pro
 Both `mode` and `category` undergo runtime validation before IPC is invoked:
 
 ```ts
-if (!['depart', 'arrivee'].includes(mode)) throw new Error("Invalid mode");
+if (!["depart", "arrivee"].includes(mode)) throw new Error("Invalid mode");
 ```
 
 ### FlightRow Validation
@@ -113,14 +112,14 @@ const FlightRowSchema = z.object({
 
 ### IPC Failures
 
-* Subprocess spawn errors → surfaced as user-facing banner
-* `stderr` content → hidden by default, shown in `debugMode`
-* JSON parse error → fallback message: `"Failed to parse XLS – please check file format"`
+- Subprocess spawn errors → surfaced as user-facing banner
+- `stderr` content → hidden by default, shown in `debugMode`
+- JSON parse error → fallback message: `"Failed to parse XLS – please check file format"`
 
 ### PATCH Failures
 
-* If PATCH fails (e.g. editing `j_class` or `y_class`), an error icon is shown inline.
-* Failed edits are not persisted or written to PDF export.
+- If PATCH fails (e.g. editing `j_class` or `y_class`), an error icon is shown inline.
+- Failed edits are not persisted or written to PDF export.
 
 ---
 
@@ -138,10 +137,10 @@ const FlightRowSchema = z.object({
 
 ## 📌 Notes
 
-* The editable behavior of `j_class` and `y_class` is now spec-compliant and synchronized with backend PATCH support.
-* The IPC implementation is aligned with backend `PRD.md`/`TECH_SPEC.backend.md`.
-* A `.env.sample` file defines fallback output path and debug mode toggle.
-* All subprocess logic is abstracted to `usePythonSubprocess()` and NOT coupled with UI.
+- The editable behavior of `j_class` and `y_class` is now spec-compliant and synchronized with backend PATCH support.
+- The IPC implementation is aligned with backend `PRD.md`/`TECH_SPEC.backend.md`.
+- A `.env.sample` file defines fallback output path and debug mode toggle.
+- All subprocess logic is abstracted to `usePythonSubprocess()` and NOT coupled with UI.
 
 ---
 
@@ -158,22 +157,22 @@ const FlightRowSchema = z.object({
 
 🧲 **Specs**:
 
-* **Props**: `data: FlightRow[]`, `errors: RowError[]`, `onEdit(row: FlightRow): void`
-* **UI Design**: Tailwind + design tokens
-* **Behavior**:
+- **Props**: `data: FlightRow[]`, `errors: RowError[]`, `onEdit(row: FlightRow): void`
+- **UI Design**: Tailwind + design tokens
+- **Behavior**:
+  - Render table with error badges
+  - Conditional row styling (invalid vs. valid)
+  - Inline editing for `j_class` and `y_class`
+  - Send PATCH requests on edit
 
-  * Render table with error badges
-  * Conditional row styling (invalid vs. valid)
-  * Inline editing for `j_class` and `y_class`
-  * Send PATCH requests on edit
-* **Routing**: none
+- **Routing**: none
 
 🧪 **Tests**:
 
-* Render rows with and without errors
-* Validate classnames (error row, selected row)
-* Simulate edit and PATCH
-* Row count and content checks
+- Render rows with and without errors
+- Validate classnames (error row, selected row)
+- Simulate edit and PATCH
+- Row count and content checks
 
 ---
 
@@ -188,18 +187,18 @@ const FlightRowSchema = z.object({
 
 🧲 **Specs**:
 
-* **Inputs**: `onUpload(file: File)`
-* **State**: `rawBuffer`, `parsedRows`, `editedRows`, `errors`
-* **Hook Chain**: `usePythonSubprocess` (for CLI), `useProcessXLS` (for parsing)
-* **Behavior**: orchestrates upload → parse → edit → render flow
-* **Routing**: none
+- **Inputs**: `onUpload(file: File)`
+- **State**: `rawBuffer`, `parsedRows`, `editedRows`, `errors`
+- **Hook Chain**: `usePythonSubprocess` (for CLI), `useProcessXLS` (for parsing)
+- **Behavior**: orchestrates upload → parse → edit → render flow
+- **Routing**: none
 
 🧪 **Tests**:
 
-* Simulate file drop/upload
-* Hook integration correctness
-* PATCH propagation and error handling
-* Edited rows reconciled after rerender
+- Simulate file drop/upload
+- Hook integration correctness
+- PATCH propagation and error handling
+- Edited rows reconciled after rerender
 
 ---
 
@@ -214,13 +213,13 @@ const FlightRowSchema = z.object({
 
 🧲 **Specs**:
 
-* **Input**: filepath, args
-* **Returns**: `{ stdout, stderr, exitCode }`
-* **Behavior**: Calls backend CLI via `child_process.spawn`
-* **Routing**: none
+- **Input**: filepath, args
+- **Returns**: `{ stdout, stderr, exitCode }`
+- **Behavior**: Calls backend CLI via `child_process.spawn`
+- **Routing**: none
 
 🧪 **Tests**:
 
-* Valid XLS triggers correct CLI command
-* Handle error codes + stderr output
-* Runtime safety for CLI args
+- Valid XLS triggers correct CLI command
+- Handle error codes + stderr output
+- Runtime safety for CLI args

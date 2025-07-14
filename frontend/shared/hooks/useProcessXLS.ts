@@ -1,9 +1,13 @@
-import { writeFile } from "fs/promises";
+import { writeFile, readFile } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
-import { usePythonSubprocess } from "./usePythonSubprocess";
+import {
+  usePythonSubprocess,
+  buildPythonErrorMessage,
+  PythonSubprocessResult,
+} from "./usePythonSubprocess";
 
 /**
  * Uploads an XLS file and retrieves parsed flight rows.
@@ -34,6 +38,23 @@ export function useProcessXLS() {
     const buffer = await file.arrayBuffer();
     await writeFile(inputPath, Buffer.from(buffer));
 
-    return run(inputPath, outputPath, { mode, category });
+    const result: PythonSubprocessResult = await run(inputPath, outputPath, {
+      mode,
+      category,
+    });
+
+    if (result.exitCode !== 0) {
+      throw buildPythonErrorMessage(result.stderr, result.exitCode);
+    }
+
+    const text = await readFile(outputPath, "utf8");
+    try {
+      return JSON.parse(text) as FlightRow[];
+    } catch {
+      const message = result.stderr.trim()
+        ? result.stderr.trim()
+        : "Invalid JSON output from Python process";
+      throw buildPythonErrorMessage(message, result.exitCode);
+    }
   };
 }
