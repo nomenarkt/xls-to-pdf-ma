@@ -7,6 +7,15 @@ import pandas as pd
 
 from backend.domain import FlightRow
 
+# JC/YC maximums per immatriculation as defined in TECH_SPEC
+CAPACITY_LIMITS: dict[str, tuple[int, int]] = {
+    "5RMJF": (8, 62),
+    "5REJC": (8, 56),
+    "5REJH": (8, 64),
+    "5REJK": (8, 64),
+    "5REJB": (10, 62),
+}
+
 REQUIRED_COLUMNS = ["Num Vol", "Départ", "Arrivée", "Imma", "SD LOC", "SA LOC"]
 
 
@@ -51,6 +60,20 @@ def parse_and_filter_xls(
 
     result: list[FlightRow] = []
     for _, row in ordered_df.iterrows():
+        jc = 0
+        yc = 0
+        if mode == "commandes" and row["Arrivée"] == "TNR":
+            if row["Départ"] in {"SVB", "DIE", "NOS"}:
+                jc += 2
+                yc += 4
+            else:
+                jc += 2
+                yc += 2
+
+        jc_max, yc_max = CAPACITY_LIMITS.get(row["Imma"], (99, 99))
+        jc = min(jc, jc_max)
+        yc = min(yc, yc_max)
+
         result.append(
             FlightRow(
                 num_vol=row["Num Vol"],
@@ -59,8 +82,8 @@ def parse_and_filter_xls(
                 imma=row["Imma"],
                 sd_loc=row["SD LOC"],
                 sa_loc=row["SA LOC"],
-                jc=0,
-                yc=0,
+                jc=jc,
+                yc=yc,
             )
         )
     return result

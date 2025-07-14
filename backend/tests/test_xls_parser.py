@@ -3,11 +3,11 @@ from __future__ import annotations
 from datetime import date, datetime
 from importlib import util
 from io import BytesIO
-import xlwt
 from pathlib import Path
 from typing import Any
 
 import pytest
+import xlwt
 
 from backend.domain import FlightRow
 
@@ -155,4 +155,39 @@ def test_pairing_sort_order() -> None:
     result = parse_and_filter_xls(file_obj, "commandes", today)
     order = [r.num_vol for r in result]
     assert order == ["MD100", "MD101", "MD200", "MD201"]
-    assert all(r.jc == 0 and r.yc == 0 for r in result)
+    jc_yc = [(r.num_vol, r.jc, r.yc) for r in result]
+    assert jc_yc[1][1:] == (2, 2)  # MD101 return leg
+    assert jc_yc[2][1:] == (2, 2)  # MD200 return leg
+    assert jc_yc[0][1:] == (0, 0)
+    assert jc_yc[3][1:] == (0, 0)
+
+
+@pytest.mark.parametrize(
+    "imma,jc_max,yc_max",
+    [
+        ("5RMJF", 8, 62),
+        ("5REJC", 8, 56),
+        ("5REJH", 8, 64),
+        ("5REJK", 8, 64),
+        ("5REJB", 10, 62),
+    ],
+)
+def test_jc_yc_limits(imma: str, jc_max: int, yc_max: int) -> None:
+    today = date(2025, 7, 10)
+    rows = [
+        {
+            "Num Vol": "MD300",
+            "Départ": "SVB",
+            "Arrivée": "TNR",
+            "Imma": imma,
+            "SD LOC": datetime(2025, 7, 11, 6, 0),
+            "SA LOC": datetime(2025, 7, 11, 8, 0),
+        }
+    ]
+    file_obj = _make_xls(rows)
+    result = parse_and_filter_xls(file_obj, "commandes", today)
+    assert len(result) == 1
+    r = result[0]
+    assert r.jc == min(2, jc_max)
+    assert r.yc == min(4, yc_max)
+    assert r.jc <= jc_max and r.yc <= yc_max
