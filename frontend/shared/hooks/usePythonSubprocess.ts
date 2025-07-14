@@ -35,7 +35,7 @@ export function usePythonSubprocess(debugMode = false) {
 
     return new Promise((resolve, reject) => {
       const proc = spawn("python", [
-        "main.py",
+        "cli/main.py",
         "--input",
         inputFile,
         "--output",
