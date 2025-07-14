@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
-from typing import BinaryIO
+from typing import BinaryIO, Literal
 
 import pandas as pd
 
@@ -21,7 +21,7 @@ REQUIRED_COLUMNS = ["Num Vol", "Départ", "Arrivée", "Imma", "SD LOC", "SA LOC"
 
 def parse_and_filter_xls(
     file_stream: BinaryIO,
-    mode: str,
+    mode: Literal["commandes", "precommandes"],
     today: date,
 ) -> list[FlightRow]:
     """Load XLS stream and return rows matching the target date."""
