@@ -10,15 +10,15 @@ This document defines the technical implementation for the frontend bridge and U
 
 ## 🛡️ Modules
 
-| Module                                    | Purpose                                                                    |
-| ----------------------------------------- | -------------------------------------------------------------------------- |
-| `UploadBox.tsx`                           | File drop zone and mode/category UI                                        |
-| `useProcessXLS.ts`                        | Frontend hook for invoking IPC bridge and validation                       |
-| `usePythonSubprocess.ts`                  | IPC bridge for Python spawn process                                        |
-| `FlightTable.tsx`                         | Tabular rendering of parsed data and editable class fields                 |
-| `AppContext.tsx`                          | Global state (mode, category, flightRows, file)                            |
-| `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error                            |
-| `useUploadFlow.ts`                        | Orchestrates file upload through subprocess parsing and PATCH update chain |
+| Module                                    | Purpose                                                    |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `UploadBox.tsx`                           | File drop zone and mode/category UI                        |
+| `useProcessXLS.ts`                        | Frontend hook for invoking IPC bridge and validation       |
+| `usePythonSubprocess.ts`                  | IPC bridge for Python spawn process                        |
+| `FlightTable.tsx`                         | Tabular rendering of parsed data and editable class fields |
+| `AppContext.tsx`                          | Global state (mode, category, flightRows, file)            |
+| `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error            |
+| `useUploadFlow.ts`                        | Orchestrates file upload through subprocess parsing        |
 
 ---
 
@@ -54,7 +54,7 @@ type FlightRow = {
 
 The Python script writes a JSON array to `outputFilePath` for later parsing.
 
-Editable fields `jc` and `yc` are supported via backend PATCH to `/process`. For seat-class validation rules, see [docs/flightRow.md](../../../../flightRow.md).
+Editable fields `jc` and `yc` are managed locally. For seat-class validation rules, see [docs/flightRow.md](../../../../flightRow.md).
 
 ---
 
@@ -71,12 +71,12 @@ Editable fields `jc` and `yc` are supported via backend PATCH to `/process`. For
    - Renders `FlightRow[]` with validation highlighting
 
 - Provides inline editing of `jc`, `yc`
-- Sends PATCH requests when locally edited
+  - Updates row state when edited
 
 5. **AppContext.tsx**: Shares state across UploadBox, Table, and PDF Export modules.
 6. **useUploadFlow\.ts**:
    - Handles full chain: upload → subprocess → editable UI
-   - Tracks `editedRows`, triggers PATCH calls, reconciles state
+   - Tracks `editedRows` and reconciles state
 
 ---
 
@@ -117,28 +117,21 @@ const FlightRowSchema = z.object({
 - `stderr` content → hidden by default, shown in `debugMode`
 - JSON parse error → fallback message: `"Failed to parse XLS – please check file format"`
 
-### PATCH Failures
-
-- If PATCH fails (e.g. editing `jc` or `yc`), an error icon is shown inline.
-- Failed edits are not persisted or written to PDF export.
-
----
-
 ## 🧪 Tests
 
-| File                             | Tests                                                                  |
-| -------------------------------- | ---------------------------------------------------------------------- |
-| `useProcessXLS.test.ts`          | Valid mode/category propagation, parse success, fallback error         |
-| `usePythonSubprocess.test.ts`    | `.on('error')`, `.on('close')`, bad output file, invalid JSON          |
-| `UploadBox.integration.test.tsx` | Upload, mode/category selection, IPC output table rendering            |
-| `FlightTable.test.tsx`           | Seat class validation (0-99), editable fields, PATCH error display     |
-| `useUploadFlow.test.ts`          | Upload → parse → edit flow, PATCH call verification, rollback on error |
+| File                             | Tests                                                          |
+| -------------------------------- | -------------------------------------------------------------- |
+| `useProcessXLS.test.ts`          | Valid mode/category propagation, parse success, fallback error |
+| `usePythonSubprocess.test.ts`    | `.on('error')`, `.on('close')`, bad output file, invalid JSON  |
+| `UploadBox.integration.test.tsx` | Upload, mode/category selection, IPC output table rendering    |
+| `FlightTable.test.tsx`           | Seat class validation (0-99), editable fields                  |
+| `useUploadFlow.test.ts`          | Upload → parse → edit flow, edit state reconciliation          |
 
 ---
 
 ## 📌 Notes
 
-- The editable behavior of `jc` and `yc` is now spec-compliant and synchronized with backend PATCH support.
+- The editable behavior of `jc` and `yc` is handled entirely on the client.
 - The IPC implementation is aligned with backend `PRD.md`/`TECH_SPEC.backend.md`.
 - A `.env.sample` file defines fallback output path and debug mode toggle.
 - All subprocess logic is abstracted to `usePythonSubprocess()` and NOT coupled with UI.
@@ -164,7 +157,7 @@ const FlightRowSchema = z.object({
   - Render table with error badges
   - Conditional row styling (invalid vs. valid)
   - Inline editing for `jc` and `yc`
-  - Send PATCH requests on edit
+  - Invoke `onEdit` callback on edit
 
 - **Routing**: none
 
@@ -172,7 +165,7 @@ const FlightRowSchema = z.object({
 
 - Render rows with and without errors
 - Validate classnames (error row, selected row)
-- Simulate edit and PATCH
+- Simulate edit interactions
 - Row count and content checks
 
 ---
@@ -198,7 +191,7 @@ const FlightRowSchema = z.object({
 
 - Simulate file drop/upload
 - Hook integration correctness
-- PATCH propagation and error handling
+- Edit state management and error handling
 - Edited rows reconciled after rerender
 
 ---

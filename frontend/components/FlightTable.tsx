@@ -2,7 +2,6 @@ import React from "react";
 import clsx from "clsx";
 import { FlightRow, RowError } from "../shared/types/flight";
 import { useSeatClassInput } from "../shared/hooks/useSeatClassInput";
-import { useEditFlightRow } from "../shared/hooks/useEditFlightRow";
 
 export interface FlightTableProps {
   data: FlightRow[];
@@ -15,7 +14,6 @@ export const FlightTable: React.FC<FlightTableProps> = ({
   errors,
   onEdit,
 }) => {
-  const { mutate } = useEditFlightRow();
   const SeatInput: React.FC<{
     value: number;
     onValid: (val: number) => void;
@@ -95,9 +93,8 @@ export const FlightTable: React.FC<FlightTableProps> = ({
                 <td className="px-2 py-1">
                   <SeatInput
                     value={r.jc ?? 0}
-                    onValid={async (val) => {
-                      const patched = await mutate({ ...r, jc: val });
-                      onEdit(patched);
+                    onValid={(val) => {
+                      onEdit({ ...r, jc: val });
                     }}
                     label={`J class for ${r.num_vol}`}
                   />
@@ -105,9 +102,8 @@ export const FlightTable: React.FC<FlightTableProps> = ({
                 <td className="px-2 py-1">
                   <SeatInput
                     value={r.yc ?? 0}
-                    onValid={async (val) => {
-                      const patched = await mutate({ ...r, yc: val });
-                      onEdit(patched);
+                    onValid={(val) => {
+                      onEdit({ ...r, yc: val });
                     }}
                     label={`Y class for ${r.num_vol}`}
                   />

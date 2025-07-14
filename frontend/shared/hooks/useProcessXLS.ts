@@ -3,7 +3,10 @@ import { tmpdir } from "os";
 import path from "path";
 import { FlightRow } from "../types/flight";
 import { Mode, Category } from "../../components/ModeSelector";
-import { usePythonSubprocess, PythonSubprocessResult } from "./usePythonSubprocess";
+import {
+  usePythonSubprocess,
+  PythonSubprocessResult,
+} from "./usePythonSubprocess";
 import { buildPythonErrorMessage } from "./buildPythonErrorMessage";
 
 /**

@@ -13,7 +13,9 @@ function normalizeDashes(text: string): string {
 }
 
 export function extractTaskTitle(line: string): string | null {
-  const match = line.match(/(?:codex task:\s*`?([^`]+)`?|task\s+\d+:\s*`?([^`]+)`?)/i);
+  const match = line.match(
+    /(?:codex task:\s*`?([^`]+)`?|task\s+\d+:\s*`?([^`]+)`?)/i,
+  );
   if (!match) return null;
   const title = match[1] ?? match[2];
   return title ? normalizeDashes(title.trim()) : null;
@@ -102,11 +104,11 @@ export async function cleanBacklog(): Promise<void> {
     const normalized = normalizeDashes(name);
     doneNormalized.add(normalized);
     let base = normalized;
-    if (normalized.includes('>')) {
-      base = normalized.split('>', 1)[0].trim();
+    if (normalized.includes(">")) {
+      base = normalized.split(">", 1)[0].trim();
       doneNormalized.add(base);
     }
-    const trimmed = base.split('-', 1)[0].trim();
+    const trimmed = base.split("-", 1)[0].trim();
     if (trimmed && trimmed !== base) {
       doneNormalized.add(trimmed);
     }
@@ -151,11 +153,11 @@ export async function parseDoneTasks(): Promise<Set<string>> {
         const name = normalizeDashes(fields[2].trim());
         tasks.add(name);
         let base = name;
-        if (name.includes('>')) {
-          base = name.split('>', 1)[0].trim();
+        if (name.includes(">")) {
+          base = name.split(">", 1)[0].trim();
           tasks.add(base);
         }
-        const trimmed = base.split('-', 1)[0].trim();
+        const trimmed = base.split("-", 1)[0].trim();
         if (trimmed && trimmed !== base) {
           tasks.add(trimmed);
         }
