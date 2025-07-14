@@ -49,3 +49,9 @@
 | backend | Return leg class boost | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | increment jc/yc for return legs | pass | 2025-07-14 | 2025-07-14 |
 | backend | Return leg clamp enforcement | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | clamp after boosts with min(value, max_capacity) | pass | 2025-07-14 | 2025-07-14 |
 | backend | XLS header helper | tests | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | Test Utilities | add assert_true_xls helper and update tests | pass | 2025-07-14 | 2025-07-14 |
+| backend | xls_upload_ingestion | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | implement xls ingestion and filtering | pass | 2025-07-14 | 2025-07-14 |
+| backend | aircraft_class_capacity_rules | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | enforce seat class capacity rules | pass | 2025-07-14 | 2025-07-14 |
+| backend | return_leg_class_boost | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | apply jc/yc boost for return legs | pass | 2025-07-14 | 2025-07-14 |
+| backend | jc_yc_capacity_clamping | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | clamp jc/yc values to aircraft capacity | pass | 2025-07-14 | 2025-07-14 |
+| backend | jc_yc_editable_ui_annotation | docs | ✅ Done | docs | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | document jc/yc editable only in frontend | - | 2025-07-14 | 2025-07-14 |
+| backend | xls_format_correctness_test | tests | ✅ Done | tests | flight | parse_filter | Offline XLS PDF Generator | Test Utilities | ensure true .xls files used in tests | pass | 2025-07-14 | 2025-07-14 |
