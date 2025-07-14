@@ -23,10 +23,10 @@
 ## 🧠 Implementation Overview
 
 graph TD
-  A[FastAPI Route: /process] --> B[UseCase: process_flight_data()]
-  B --> C[Repo: parse_and_filter_xls()]
-  C --> D[Pandas | .xls In-Memory Parsing]
-  D --> E[Return filtered + reordered rows to frontend]
+A\[FastAPI Route: /process] --> B\[UseCase: process\_flight\_data()]
+B --> C\[Repo: parse\_and\_filter\_xls()]
+C --> D\[Pandas | .xls In-Memory Parsing]
+D --> E\[Return filtered + reordered rows to frontend]
 
 ---
 
@@ -116,7 +116,24 @@ async def process(
    * Group by flight number prefix or pairing logic (e.g., TNR → TLE then TLE → TNR)
    * Custom sort key applied based on SD LOC + departure logic
 
-5. **Format Output Rows**
+5. **Assign JC/YC Defaults by Aircraft**
+
+   | Imma  | jc max | yc max |
+   | ----- | ------ | ------ |
+   | 5RMJF | 8      | 62     |
+   | 5REJC | 8      | 56     |
+   | 5REJH | 8      | 64     |
+   | 5REJK | 8      | 64     |
+   | 5REJB | 10     | 62     |
+
+   * All rows must initialize `jc = 0`, `yc = 0`
+   * Then, if mode = `commandes` and `arrivee == "TNR"`:
+
+     * If `depart` in {SVB, DIE, NOS} → `jc += 2`, `yc += 4`
+     * Else → `jc += 2`, `yc += 2`
+   * After adjustment, `jc` and `yc` are **clamped to aircraft max capacity**
+
+6. **Format Output Rows**
 
    ```python
    result = []
@@ -128,8 +145,8 @@ async def process(
            imma=row["Imma"],
            sd_loc=row["SD LOC"],
            sa_loc=row["SA LOC"],
-           jc=0,
-           yc=0
+           jc=jc_value,
+           yc=yc_value
        ))
    return result
    ```
@@ -140,9 +157,9 @@ async def process(
 
 * The generated PDF is **non-editable** (read-only):
 
-  * JC/YC must be filled in the web UI prior to PDF generation.
-  * Final PDF reflects this immutable snapshot.
-* Output structure must pre-organize flights into **clean leg sequences** before layout rendering.
+  * JC/YC must be filled in the web UI prior to PDF generation
+  * Final PDF reflects this immutable snapshot
+  * UI edits are **local only** and must not mutate backend data
 
 ---
 
@@ -150,13 +167,14 @@ async def process(
 
 ### Unit
 
-| Test                          | Input                         | Expected Result            |
-| ----------------------------- | ----------------------------- | -------------------------- |
-| Valid .xls for `commandes`    | Raw file, mode = commandes    | Rows for J+1 returned      |
-| Valid .xls for `precommandes` | Raw file, mode = precommandes | Rows for J+2 returned      |
-| Missing column                | File missing `Imma`           | Raises ValueError          |
-| Non-date `SD LOC`             | Malformed field               | Skipped or handled cleanly |
-| Out-of-range JC/YC            | Invalid values in UI          | PDF button disabled        |
+| Test                          | Input                         | Expected Result               |
+| ----------------------------- | ----------------------------- | ----------------------------- |
+| Valid .xls for `commandes`    | Raw file, mode = commandes    | Rows for J+1 returned         |
+| Valid .xls for `precommandes` | Raw file, mode = precommandes | Rows for J+2 returned         |
+| Missing column                | File missing `Imma`           | Raises ValueError             |
+| Non-date `SD LOC`             | Malformed field               | Skipped or handled cleanly    |
+| Out-of-range JC/YC UI edit    | JC > max, YC > max            | Clamped to aircraft limits    |
+| Return leg boost              | Commandes, arrivee == TNR     | JC/YC incremented accordingly |
 
 ### Integration
 
@@ -184,91 +202,22 @@ async def process(
 
 ---
 
-### 💻 Codex Task: /process endpoint
-📭 **Context:** backend
-📁 **Layer:** usecase
-🧱 **Module:** `parse_filter`, `ingestion_filtering`
-📚 **Epic:** Flight Ingestion
-🧹 **Feature:** Offline XLS PDF Generator
----
-### 📐 Specs
-**Input:**
-* `file`: Excel file stream (`.xls`)
-* `mode`: `"commandes"` | `"precommandes"`
-* `today`: optional override for current date (default to now)
-**Validation Rules:**
-* File must be valid `.xls` and parsable
-* Required columns: `"Num Vol"`, `"Départ"`, `"Arrivée"`, `"Imma"`, `"SD LOC"`, `"SA LOC"`
-* `mode` must be either `"commandes"` or `"precommandes"`
-* Dates must be normalized with `today` as base
-* JC/YC columns must be valid (defaults to 0–99)
-**Logic Flow:**
-1. Parse uploaded Excel file into row structure
-2. Normalize and clean up date fields
-3. Apply filtering based on `mode`:
-   * `"commandes"` → `today + 1`
-   * `"precommandes"` → `today + 2`
-4. Sort flights by `SD LOC` + logical order
-5. Group flights into display pairs (TNR→TLE→TNR, etc.)
-6. Return structured row list for UI and PDF generation
-**Output:**
-```json
-[
-  {
-    "num_vol": "MD721",
-    "depart": "TNR",
-    "arrivee": "TLE",
-    "imma": "5REJC",
-    "sd_loc": "2025-07-11T04:10:00",
-    "sa_loc": "2025-07-11T06:00:00",
-    "jc": 0,
-    "yc": 0
-  },
-  ...
-]
-```
----
-### 📀 Tests
-**✅ Unit Tests:**
-| Scenario                | Expectation                         |
-| ----------------------- | ----------------------------------- |
-| Valid `.xls` with J+1   | Rows filtered and grouped correctly |
-| Valid `.xls` with J+2   | Rows filtered and grouped correctly |
-| Missing columns         | Raise `ValueError`                  |
-| JC/YC out of range      | Skipped or marked invalid           |
-| Upload malformed `.xls` | Raise fast failure                  |
-| Incomplete rows         | Handled or excluded                 |
-| Filtering mismatch      | Return empty list                   |
-**✅ Integration Tests:**
-| Scenario                 | Expectation                 |
-| ------------------------ | --------------------------- |
-| Upload + command mode    | Returns filtered JSON       |
-| Upload + precommand mode | Returns filtered JSON       |
-| Upload malformed file    | Returns 400                 |
-| Upload invalid JC/YC     | PDF button disabled         |
-| Out-of-range JC/YC       | Error state or empty result |
----
-### 🔐 Auth:
-* No auth required (offline tool for local ops)
-* ⚠️ Future: Add role-based auth for command filtering
----
-### 🧩 Dependencies:
-* `pandas`, `pyxlsb`, or `openpyxl`
-* `datetime`, `uvicorn`, `fastapi`
-* Shared model: `FlightRow` (includes time parsing + grouping)
----
 ## ✅ Completion Summary: Offline XLS PDF Generator
+
 ### Tasks Completed
-- [x] Remove undocumented category field from `/process`
-- [x] Introduce FlightRow Pydantic model
-- [x] Return typed FlightRow objects with jc/yc defaults
-- [x] Add OpenAPI metadata to `/process` endpoint
-- [x] Revise XLS parsing tests for true `.xls` files
+
+* [x] Remove undocumented category field from `/process`
+* [x] Introduce FlightRow Pydantic model
+* [x] Return typed FlightRow objects with jc/yc defaults
+* [x] Apply return leg boosts in commandes mode
+* [x] Clamp jc/yc values to aircraft limits
+* [x] Clarify frontend jc/yc editing is UI-only, non-persistent
+* [x] Add OpenAPI metadata to `/process` endpoint
+* [x] Revise XLS parsing tests for true `.xls` files
+
 ### Validation
-- 🔍 Test coverage confirmed with `pytest --cov`
-- 📤 Endpoint outputs `List[FlightRow]` with correct schema
-- 📂 Tests use `.xls` input with jc/yc defaults enforced
-- 🧾 OpenAPI metadata includes summary + description
 
-This completes the implementation of the **Offline XLS PDF Generator** feature per the documented specification.
-
+* 🔍 Test coverage confirmed with `pytest --cov`
+* 📤 Endpoint outputs `List[FlightRow]` with correct schema
+* 📂 Tests use `.xls` input with jc/yc logic enforced
+* 🧾 OpenAPI metadata includes summary + description
