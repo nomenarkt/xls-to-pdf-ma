@@ -27,7 +27,7 @@ Airline ground teams today manage catering and cabin service planning using manu
 * XLS Upload UI in browser (React + Tailwind)
 * Embedded backend (Pyodide or subprocess FastAPI) for XLS processing
 * XLS parser with validation, filtering, pairing logic
-* Editable PDF output with airline-specific layout and fields
+* PDF output with airline-specific layout and fields
 * PDF download or in-browser preview
 * Single-user local desktop usage
 
