@@ -78,6 +78,19 @@ test("cleanBacklog handles quoted backlog entries", async () => {
   expect(backlog.trim()).toBe("");
 });
 
+test("cleanBacklog detects numbered task headings", async () => {
+  const backlogPath = path.join(tmp, "frontend", "backlog.md");
+  fs.writeFileSync(backlogPath, "### Task 2: Numbered\n");
+  await updateTaskTracker({
+    taskName: "Numbered",
+    phase: "context",
+    status: "✅ Done",
+    description: "notes",
+  });
+  const backlog = fs.readFileSync(backlogPath, "utf8");
+  expect(backlog.trim()).toBe("");
+});
+
 test("cleanBacklog normalizes dash variants", async () => {
   const backlogPath = path.join(tmp, "frontend", "backlog.md");
   fs.writeFileSync(backlogPath, "### Codex Task: `Dash – Test`\n");

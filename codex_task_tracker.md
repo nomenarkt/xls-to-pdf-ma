@@ -55,3 +55,5 @@
 | backend | jc_yc_capacity_clamping | repository | ✅ Done | repository | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | clamp jc/yc values to aircraft capacity | pass | 2025-07-14 | 2025-07-14 |
 | backend | jc_yc_editable_ui_annotation | docs | ✅ Done | docs | flight | parse_filter | Offline XLS PDF Generator | Flight Parsing | document jc/yc editable only in frontend | - | 2025-07-14 | 2025-07-14 |
 | backend | xls_format_correctness_test | tests | ✅ Done | tests | flight | parse_filter | Offline XLS PDF Generator | Test Utilities | ensure true .xls files used in tests | pass | 2025-07-14 | 2025-07-14 |
+| backend | Modify extract_task_title logic | context | ✅ Done | - | - | internal.context | Task logging | Codex Tracker | detect Task <number> headings | pass | 2025-07-14 | 2025-07-14 |
+| frontend | Modify extract_task_title logic | context | ✅ Done | - | - | utils | Task logging | Codex Tracker | detect Task <number> headings | pass | 2025-07-14 | 2025-07-14 |

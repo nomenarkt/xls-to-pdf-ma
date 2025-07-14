@@ -13,8 +13,10 @@ function normalizeDashes(text: string): string {
 }
 
 export function extractTaskTitle(line: string): string | null {
-  const match = line.match(/codex task:\s*`?([^`]+)`?/i);
-  return match ? normalizeDashes(match[1].trim()) : null;
+  const match = line.match(/(?:codex task:\s*`?([^`]+)`?|task\s+\d+:\s*`?([^`]+)`?)/i);
+  if (!match) return null;
+  const title = match[1] ?? match[2];
+  return title ? normalizeDashes(title.trim()) : null;
 }
 
 export interface TaskLogEntry {
