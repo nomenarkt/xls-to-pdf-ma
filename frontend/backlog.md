@@ -1,32 +1,6 @@
 # 🧩 Frontend Feature Backlog
 -------------------------------
 
-### 💻 Codex Task: `Parse XLS Hook – useProcessXLS()`
-
-🗬 **Context**: frontend
-📁 **Platform**: web
-🎯 **Objective**: Extract and filter flight data from uploaded XLS file
-🧱 **Module**: `useProcessXLS`
-📦 **Epic**: Flight Parsing Flow
-🔧 **Feature**: XLS Filtering Logic
-
-🧲 **Specs**:
-
-* **Inputs**: `ArrayBuffer`, `columnsToExtract`, `filters`
-* **Returns**: `{ valid: FlightRow[], errors: [...] }`
-* **Validation**: Zod for `FlightRow`
-* **Behavior**: parses rows, filters by criteria, handles errors
-* **UI**: none
-* **Routing**: none
-
-🧪 **Tests**:
-
-* Validate column presence
-* Filter matching and failing
-* Edge cases: empty XLS, malformed rows
-
----
-
 ### 💻 Codex Task: `Flight Table UI – FlightTable`
 
 🗬 **Context**: frontend
@@ -102,3 +76,7 @@
 * Runtime safety for CLI args
 
 ---
+
+
+
+
