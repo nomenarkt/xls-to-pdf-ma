@@ -60,3 +60,4 @@
 | backend | CLI parser main.py | context | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | CLI Integration | Python CLI for parse+JSON output | pass | 2025-07-14 | 2025-07-14 |
 | frontend | Rename seat class fields to jc/yc | refactor | ✅ Done | shared | flight | parse_filter | Flight Parsing Flow | Seat Class Fields | rename j_class/y_class to jc/yc across frontend code, update docs | pass | 2025-07-14 | 2025-07-14 |
 | frontend | Seat edit local state | refactor | ✅ Done | ui | flight | parse_filter | Flight Parsing Flow | Table View Renderer | remove patch hook; manage seats locally | pass | 2025-07-14 | 2025-07-14 |
+| frontend | Remove Category from ModeSelector | refactor | ✅ Done | ui | flight | parse_filter | Flight Parsing Flow | Mode Selector Simplification | remove category enum and props | pass | 2025-07-14 | 2025-07-14 |

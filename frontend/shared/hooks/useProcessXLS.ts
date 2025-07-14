@@ -2,7 +2,7 @@ import { writeFile, readFile } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
 import { FlightRow } from "../types/flight";
-import { Mode, Category } from "../../components/ModeSelector";
+import { Mode } from "../../components/ModeSelector";
 import {
   usePythonSubprocess,
   PythonSubprocessResult,
@@ -14,21 +14,14 @@ import { buildPythonErrorMessage } from "./buildPythonErrorMessage";
  *
  * Example:
  * ```ts
- * const rows = await useProcessXLS()(file, Mode.PRECOMMANDES, Category.SALON);
+ * const rows = await useProcessXLS()(file, Mode.PRECOMMANDES);
  * ```
  */
 export function useProcessXLS() {
   const run = usePythonSubprocess();
-  return async (
-    file: File,
-    mode: Mode,
-    category: Category,
-  ): Promise<FlightRow[]> => {
+  return async (file: File, mode: Mode): Promise<FlightRow[]> => {
     if (!Object.values(Mode).includes(mode)) {
       throw new Error(`Invalid mode: ${mode}`);
-    }
-    if (!Object.values(Category).includes(category)) {
-      throw new Error(`Invalid category: ${category}`);
     }
 
     const timestamp = Date.now();
@@ -40,7 +33,6 @@ export function useProcessXLS() {
 
     const result: PythonSubprocessResult = await run(inputPath, outputPath, {
       mode,
-      category,
     });
 
     if (result.exitCode !== 0) {

@@ -1,6 +1,6 @@
 import { usePythonSubprocess } from "./usePythonSubprocess";
 import { spawn } from "child_process";
-import { Mode, Category } from "../../components/ModeSelector";
+import { Mode } from "../../components/ModeSelector";
 import { EventEmitter } from "events";
 
 jest.mock("child_process");
@@ -34,7 +34,6 @@ describe("usePythonSubprocess", () => {
     const run = usePythonSubprocess();
     const promise = run("in.xls", "out.json", {
       mode: Mode.COMMANDES,
-      category: Category.SALON,
     });
 
     child.stdout.emit("data", "ok");
@@ -54,7 +53,6 @@ describe("usePythonSubprocess", () => {
     const run = usePythonSubprocess();
     const promise = run("in.xls", "out.json", {
       mode: Mode.COMMANDES,
-      category: Category.SALON,
     });
 
     child.stderr.emit("data", "bad\n");
@@ -71,7 +69,6 @@ describe("usePythonSubprocess", () => {
     const run = usePythonSubprocess(true);
     const promise = run("in.xls", "out.json", {
       mode: Mode.COMMANDES,
-      category: Category.SALON,
     });
 
     child.stderr.emit("data", "bad\n");
@@ -89,7 +86,6 @@ describe("usePythonSubprocess", () => {
     const run = usePythonSubprocess();
     const promise = run("in.xls", "out.json", {
       mode: Mode.COMMANDES,
-      category: Category.SALON,
     });
     jest.advanceTimersByTime(10000);
     await expect(promise).rejects.toThrow("timeout");
@@ -97,20 +93,13 @@ describe("usePythonSubprocess", () => {
     jest.useRealTimers();
   });
 
-  it("validates mode and category", async () => {
+  it("validates mode", async () => {
     const run = usePythonSubprocess();
     await expect(
       run("in.xls", "out.json", {
         mode: "bad" as Mode,
-        category: Category.SALON,
       }),
     ).rejects.toThrow("Invalid mode");
-    await expect(
-      run("in.xls", "out.json", {
-        mode: Mode.COMMANDES,
-        category: "bad" as Category,
-      }),
-    ).rejects.toThrow("Invalid category");
   });
 
   it("rejects when child emits error", async () => {
@@ -125,7 +114,6 @@ describe("usePythonSubprocess", () => {
     const err = new Error("boom");
     const promise = run("in.xls", "out.json", {
       mode: Mode.COMMANDES,
-      category: Category.SALON,
     });
     child.emit("error", err);
     await expect(promise).rejects.toBe(err);

@@ -3,7 +3,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { ModeSelector, Mode, Category } from "./ModeSelector";
+import { ModeSelector, Mode } from "./ModeSelector";
 import { UploadBox } from "./UploadBox";
 import { useProcessXLS } from "../shared/hooks/useProcessXLS";
 import { FlightRow } from "../shared/types/flight";
@@ -37,14 +37,13 @@ const rows: FlightRow[] = [
 
 const TestScreen: React.FC = () => {
   const [mode, setMode] = React.useState<Mode>(Mode.PRECOMMANDES);
-  const [category, setCategory] = React.useState<Category>(Category.SALON);
   const [data, setData] = React.useState<FlightRow[] | null>(null);
   const [error, setError] = React.useState(false);
   const processXLS = useProcessXLS();
 
   const handleUpload = async (file: File) => {
     try {
-      const res = await processXLS(file, mode, category);
+      const res = await processXLS(file, mode);
       setData(res);
     } catch {
       setError(true);
@@ -55,10 +54,8 @@ const TestScreen: React.FC = () => {
     <div>
       <ModeSelector
         mode={mode}
-        category={category}
-        onChange={(m, c) => {
+        onChange={(m) => {
           setMode(m);
-          setCategory(c);
         }}
       />
       <UploadBox onUpload={handleUpload} />
@@ -73,9 +70,6 @@ test.skip("valid flow renders rows", async () => {
   render(<TestScreen />);
   await userEvent.click(
     screen.getByRole("button", { name: /Commandes Définitives/i }),
-  );
-  await userEvent.click(
-    screen.getByRole("button", { name: /Prestations à Bord/i }),
   );
   const input = screen.getByTestId("file-input");
   await userEvent.upload(input, createFile("test.xls"));
