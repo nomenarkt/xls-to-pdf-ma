@@ -21,8 +21,8 @@ describe("useEditFlightRow", () => {
       imma: "",
       sd_loc: "",
       sa_loc: "",
-      j_class: 1,
-      y_class: 2,
+      jc: 1,
+      yc: 2,
     };
     patchMock.mockResolvedValue({ data: row });
     const { result } = renderHook(() => useEditFlightRow());
@@ -32,8 +32,8 @@ describe("useEditFlightRow", () => {
     });
     expect(patchMock).toHaveBeenCalledWith("/process", {
       num_vol: "AF1",
-      j_class: 1,
-      y_class: 2,
+      jc: 1,
+      yc: 2,
     });
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
@@ -52,8 +52,8 @@ describe("useEditFlightRow", () => {
           imma: "",
           sd_loc: "",
           sa_loc: "",
-          j_class: 0,
-          y_class: 0,
+          jc: 0,
+          yc: 0,
         }),
       ).rejects.toBe(err);
     });

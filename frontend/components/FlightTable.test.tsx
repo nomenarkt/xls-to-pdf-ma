@@ -24,8 +24,8 @@ describe("FlightTable", () => {
     imma: "A320",
     sd_loc: "A",
     sa_loc: "B",
-    j_class: 1,
-    y_class: 2,
+    jc: 1,
+    yc: 2,
   };
 
   test("renders all columns", () => {
@@ -35,7 +35,7 @@ describe("FlightTable", () => {
     expect(screen.getByDisplayValue("2")).toBeInTheDocument();
   });
 
-  test("only j_class and y_class are editable", () => {
+  test("only jc and yc are editable", () => {
     render(<FlightTable data={[baseRow]} errors={[]} onEdit={() => {}} />);
     const inputs = screen.getAllByRole("spinbutton");
     expect(inputs).toHaveLength(2);
@@ -43,20 +43,20 @@ describe("FlightTable", () => {
 
   test("onEdit called after PATCH", async () => {
     const handle = jest.fn();
-    mutateMock.mockResolvedValue({ ...baseRow, j_class: 5 });
+    mutateMock.mockResolvedValue({ ...baseRow, jc: 5 });
     render(<FlightTable data={[baseRow]} errors={[]} onEdit={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
     await userEvent.clear(input);
     await userEvent.type(input, "5");
     expect(mutateMock).toHaveBeenCalledWith({
       ...baseRow,
-      j_class: 5,
+      jc: 5,
     });
-    expect(handle).toHaveBeenCalledWith({ ...baseRow, j_class: 5 });
+    expect(handle).toHaveBeenCalledWith({ ...baseRow, jc: 5 });
   });
 
   test("handles undefined numeric fields", () => {
-    const row = { ...baseRow, j_class: undefined as unknown as number };
+    const row = { ...baseRow, jc: undefined as unknown as number };
     render(<FlightTable data={[row]} errors={[]} onEdit={() => {}} />);
     expect(screen.getAllByRole("spinbutton")[0]).toHaveValue(0);
   });
@@ -82,13 +82,13 @@ describe("FlightTable", () => {
 
   test("valid input clears error", async () => {
     const handle = jest.fn();
-    mutateMock.mockResolvedValue({ ...baseRow, j_class: 23 });
+    mutateMock.mockResolvedValue({ ...baseRow, jc: 23 });
     render(<FlightTable data={[baseRow]} errors={[]} onEdit={handle} />);
     const input = screen.getAllByRole("spinbutton")[0];
     await userEvent.clear(input);
     await userEvent.type(input, "23");
     input.blur();
-    expect(handle).toHaveBeenCalledWith({ ...baseRow, j_class: 23 });
+    expect(handle).toHaveBeenCalledWith({ ...baseRow, jc: 23 });
     expect(input).not.toHaveClass("border-red-500");
   });
 

@@ -58,3 +58,4 @@
 | backend | Modify extract_task_title logic | context | ✅ Done | - | - | internal.context | Task logging | Codex Tracker | detect Task <number> headings | pass | 2025-07-14 | 2025-07-14 |
 | frontend | Modify extract_task_title logic | context | ✅ Done | - | - | utils | Task logging | Codex Tracker | detect Task <number> headings | pass | 2025-07-14 | 2025-07-14 |
 | backend | CLI parser main.py | context | ✅ Done | - | flight | parse_filter | Offline XLS PDF Generator | CLI Integration | Python CLI for parse+JSON output | pass | 2025-07-14 | 2025-07-14 |
+| frontend | Rename seat class fields to jc/yc | refactor | ✅ Done | shared | flight | parse_filter | Flight Parsing Flow | Seat Class Fields | rename j_class/y_class to jc/yc across frontend code, update docs | pass | 2025-07-14 | 2025-07-14 |

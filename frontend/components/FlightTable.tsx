@@ -94,9 +94,9 @@ export const FlightTable: React.FC<FlightTableProps> = ({
                 <td className="px-2 py-1">{r.sa_loc}</td>
                 <td className="px-2 py-1">
                   <SeatInput
-                    value={r.j_class ?? 0}
+                    value={r.jc ?? 0}
                     onValid={async (val) => {
-                      const patched = await mutate({ ...r, j_class: val });
+                      const patched = await mutate({ ...r, jc: val });
                       onEdit(patched);
                     }}
                     label={`J class for ${r.num_vol}`}
@@ -104,9 +104,9 @@ export const FlightTable: React.FC<FlightTableProps> = ({
                 </td>
                 <td className="px-2 py-1">
                   <SeatInput
-                    value={r.y_class ?? 0}
+                    value={r.yc ?? 0}
                     onValid={async (val) => {
-                      const patched = await mutate({ ...r, y_class: val });
+                      const patched = await mutate({ ...r, yc: val });
                       onEdit(patched);
                     }}
                     label={`Y class for ${r.num_vol}`}

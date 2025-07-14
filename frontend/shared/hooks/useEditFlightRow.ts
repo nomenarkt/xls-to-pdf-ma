@@ -12,8 +12,8 @@ export function useEditFlightRow() {
     try {
       const { data } = await axios.patch<FlightRow>("/process", {
         num_vol: row.num_vol,
-        j_class: row.j_class,
-        y_class: row.y_class,
+        jc: row.jc,
+        yc: row.yc,
       });
       setIsLoading(false);
       return data;

@@ -16,9 +16,9 @@ jest.mock("./usePythonSubprocess", () => {
 });
 jest.mock("./buildPythonErrorMessage", () => ({
   buildPythonErrorMessage: jest.fn((...args) =>
-    jest.requireActual("./buildPythonErrorMessage").buildPythonErrorMessage(
-      ...args,
-    )
+    jest
+      .requireActual("./buildPythonErrorMessage")
+      .buildPythonErrorMessage(...args),
   ),
 }));
 jest.mock("fs/promises");
@@ -49,8 +49,8 @@ describe("useProcessXLS", () => {
         imma: "A320",
         sd_loc: "A",
         sa_loc: "B",
-        j_class: 0,
-        y_class: 0,
+        jc: 0,
+        yc: 0,
       },
     ];
     runMock.mockResolvedValue({ stdout: "", stderr: "", exitCode: 0 });
@@ -82,9 +82,7 @@ describe("useProcessXLS", () => {
     const processXLS = useProcessXLS();
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
-    ).rejects.toThrow(
-      "Python subprocess failed to parse XLS: exit code 1",
-    );
+    ).rejects.toThrow("Python subprocess failed to parse XLS: exit code 1");
   });
 
   it("throws when JSON is invalid", async () => {
@@ -93,9 +91,7 @@ describe("useProcessXLS", () => {
     const processXLS = useProcessXLS();
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
-    ).rejects.toThrow(
-      "Python subprocess failed to parse XLS: exit code 0",
-    );
+    ).rejects.toThrow("Python subprocess failed to parse XLS: exit code 0");
   });
 
   it("validates mode", async () => {

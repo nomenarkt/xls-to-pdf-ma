@@ -10,15 +10,15 @@ This document defines the technical implementation for the frontend bridge and U
 
 ## 🛡️ Modules
 
-| Module                       | Purpose                                                                    |
-| ---------------------------- | -------------------------------------------------------------------------- |
-| `UploadBox.tsx`              | File drop zone and mode/category UI                                        |
-| `useProcessXLS.ts`           | Frontend hook for invoking IPC bridge and validation                       |
-| `usePythonSubprocess.ts`     | IPC bridge for Python spawn process                                        |
-| `FlightTable.tsx`            | Tabular rendering of parsed data and editable class fields                 |
-| `AppContext.tsx`             | Global state (mode, category, flightRows, file)                            |
-| `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error |
-| `useUploadFlow.ts`           | Orchestrates file upload through subprocess parsing and PATCH update chain |
+| Module                                    | Purpose                                                                    |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| `UploadBox.tsx`                           | File drop zone and mode/category UI                                        |
+| `useProcessXLS.ts`                        | Frontend hook for invoking IPC bridge and validation                       |
+| `usePythonSubprocess.ts`                  | IPC bridge for Python spawn process                                        |
+| `FlightTable.tsx`                         | Tabular rendering of parsed data and editable class fields                 |
+| `AppContext.tsx`                          | Global state (mode, category, flightRows, file)                            |
+| `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error                            |
+| `useUploadFlow.ts`                        | Orchestrates file upload through subprocess parsing and PATCH update chain |
 
 ---
 
@@ -47,14 +47,14 @@ type FlightRow = {
   imma: string;
   sd_loc: string;
   sa_loc: string;
-  j_class?: string;
-  y_class?: string;
+  jc?: string;
+  yc?: string;
 };
 ```
 
 The Python script writes a JSON array to `outputFilePath` for later parsing.
 
-Editable fields `j_class` and `y_class` are supported via backend PATCH to `/process`. For seat-class validation rules, see [docs/flightRow.md](../../../../flightRow.md).
+Editable fields `jc` and `yc` are supported via backend PATCH to `/process`. For seat-class validation rules, see [docs/flightRow.md](../../../../flightRow.md).
 
 ---
 
@@ -69,8 +69,9 @@ Editable fields `j_class` and `y_class` are supported via backend PATCH to `/pro
 
 4. **FlightTable.tsx**:
    - Renders `FlightRow[]` with validation highlighting
-   - Provides inline editing of `j_class`, `y_class`
-   - Sends PATCH requests when locally edited
+
+- Provides inline editing of `jc`, `yc`
+- Sends PATCH requests when locally edited
 
 5. **AppContext.tsx**: Shares state across UploadBox, Table, and PDF Export modules.
 6. **useUploadFlow\.ts**:
@@ -101,8 +102,8 @@ const FlightRowSchema = z.object({
   imma: z.string(),
   sd_loc: z.string(),
   sa_loc: z.string(),
-  j_class: z.string().optional(),
-  y_class: z.string().optional(),
+  jc: z.string().optional(),
+  yc: z.string().optional(),
 });
 ```
 
@@ -118,7 +119,7 @@ const FlightRowSchema = z.object({
 
 ### PATCH Failures
 
-- If PATCH fails (e.g. editing `j_class` or `y_class`), an error icon is shown inline.
+- If PATCH fails (e.g. editing `jc` or `yc`), an error icon is shown inline.
 - Failed edits are not persisted or written to PDF export.
 
 ---
@@ -137,7 +138,7 @@ const FlightRowSchema = z.object({
 
 ## 📌 Notes
 
-- The editable behavior of `j_class` and `y_class` is now spec-compliant and synchronized with backend PATCH support.
+- The editable behavior of `jc` and `yc` is now spec-compliant and synchronized with backend PATCH support.
 - The IPC implementation is aligned with backend `PRD.md`/`TECH_SPEC.backend.md`.
 - A `.env.sample` file defines fallback output path and debug mode toggle.
 - All subprocess logic is abstracted to `usePythonSubprocess()` and NOT coupled with UI.
@@ -162,7 +163,7 @@ const FlightRowSchema = z.object({
 - **Behavior**:
   - Render table with error badges
   - Conditional row styling (invalid vs. valid)
-  - Inline editing for `j_class` and `y_class`
+  - Inline editing for `jc` and `yc`
   - Send PATCH requests on edit
 
 - **Routing**: none
