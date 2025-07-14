@@ -231,3 +231,24 @@ def test_jc_yc_limits(imma: str, jc_max: int, yc_max: int) -> None:
     assert r.jc == min(2, jc_max)
     assert r.yc == min(4, yc_max)
     assert r.jc <= jc_max and r.yc <= yc_max
+
+
+def test_return_leg_clamped(monkeypatch: pytest.MonkeyPatch) -> None:
+    today = date(2025, 7, 10)
+    rows = [
+        {
+            "Num Vol": "MD500",
+            "Départ": "SVB",
+            "Arrivée": "TNR",
+            "Imma": "5RMJF",
+            "SD LOC": datetime(2025, 7, 11, 6, 0),
+            "SA LOC": datetime(2025, 7, 11, 8, 0),
+        }
+    ]
+    file_obj = _make_xls(rows)
+    monkeypatch.setitem(xls_parser.CAPACITY_LIMITS, "5RMJF", (1, 1))
+    result = parse_and_filter_xls(file_obj, "commandes", today)
+    assert len(result) == 1
+    r = result[0]
+    assert r.jc == 1
+    assert r.yc == 1
