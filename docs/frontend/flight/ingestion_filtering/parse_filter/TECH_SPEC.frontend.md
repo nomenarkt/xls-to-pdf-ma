@@ -17,7 +17,7 @@ This document defines the technical implementation for the frontend bridge and U
 | `usePythonSubprocess.ts`     | IPC bridge for Python spawn process                                        |
 | `FlightTable.tsx`            | Tabular rendering of parsed data and editable class fields                 |
 | `AppContext.tsx`             | Global state (mode, category, flightRows, file)                            |
-| `buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error                            |
+| `shared/hooks/buildPythonErrorMessage.ts` | Transforms subprocess stderr to UI-facing error |
 | `useUploadFlow.ts`           | Orchestrates file upload through subprocess parsing and PATCH update chain |
 
 ---

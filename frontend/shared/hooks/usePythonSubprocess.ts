@@ -1,21 +1,6 @@
 import { spawn } from "child_process";
 import { Mode, Category } from "../../components/ModeSelector";
-
-export function buildPythonErrorMessage(
-  stderr: string,
-  code?: number | null,
-  hint = "Python subprocess failed to parse XLS",
-): Error {
-  const parts = [hint];
-  const trimmed = stderr.trim();
-  if (trimmed) {
-    parts.push(trimmed);
-  }
-  if (code !== undefined) {
-    parts.push(`exit code ${code}`);
-  }
-  return new Error(parts.join(": "));
-}
+import { buildPythonErrorMessage } from "./buildPythonErrorMessage";
 
 export interface PythonFilters {
   mode: Mode;
@@ -35,7 +20,7 @@ export interface PythonSubprocessResult {
   exitCode: number | null;
 }
 
-export function usePythonSubprocess() {
+export function usePythonSubprocess(debugMode = false) {
   return async (
     inputFile: string,
     outputFile: string,
@@ -82,6 +67,10 @@ export function usePythonSubprocess() {
 
       proc.on("close", (code) => {
         clearTimeout(timer);
+        if (code && code !== 0) {
+          reject(buildPythonErrorMessage(stderr, code, undefined, debugMode));
+          return;
+        }
         resolve({ stdout, stderr, exitCode: code ?? null });
       });
     });

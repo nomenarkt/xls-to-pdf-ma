@@ -48,7 +48,7 @@ describe("usePythonSubprocess", () => {
     });
   });
 
-  it("resolves with exit code on failure", async () => {
+  it("rejects with generic message on failure", async () => {
     const child = createChild();
     spawnMock.mockReturnValue(child);
     const run = usePythonSubprocess();
@@ -57,14 +57,29 @@ describe("usePythonSubprocess", () => {
       category: Category.SALON,
     });
 
-    child.stderr.emit("data", "bad");
+    child.stderr.emit("data", "bad\n");
     child.emit("close", 2);
 
-    await expect(promise).resolves.toEqual({
-      stdout: "",
-      stderr: "bad",
-      exitCode: 2,
+    await expect(promise).rejects.toThrow(
+      "Python subprocess failed to parse XLS: exit code 2",
+    );
+  });
+
+  it("includes stderr in debug mode", async () => {
+    const child = createChild();
+    spawnMock.mockReturnValue(child);
+    const run = usePythonSubprocess(true);
+    const promise = run("in.xls", "out.json", {
+      mode: Mode.COMMANDES,
+      category: Category.SALON,
     });
+
+    child.stderr.emit("data", "bad\n");
+    child.emit("close", 3);
+
+    await expect(promise).rejects.toThrow(
+      "Python subprocess failed to parse XLS: bad: exit code 3",
+    );
   });
 
   it("rejects on timeout", async () => {

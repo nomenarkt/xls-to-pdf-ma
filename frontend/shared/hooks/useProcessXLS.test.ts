@@ -11,10 +11,16 @@ jest.mock("./usePythonSubprocess", () => {
   return {
     __esModule: true,
     usePythonSubprocess: jest.fn(),
-    buildPythonErrorMessage: actual.buildPythonErrorMessage,
     PythonSubprocessResult: actual.PythonSubprocessResult,
   };
 });
+jest.mock("./buildPythonErrorMessage", () => ({
+  buildPythonErrorMessage: jest.fn((...args) =>
+    jest.requireActual("./buildPythonErrorMessage").buildPythonErrorMessage(
+      ...args,
+    )
+  ),
+}));
 jest.mock("fs/promises");
 
 const runMock = jest.fn();
@@ -77,7 +83,7 @@ describe("useProcessXLS", () => {
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
     ).rejects.toThrow(
-      "Python subprocess failed to parse XLS: bad: exit code 1",
+      "Python subprocess failed to parse XLS: exit code 1",
     );
   });
 
@@ -88,7 +94,7 @@ describe("useProcessXLS", () => {
     await expect(
       processXLS(new File([], "f.xls"), Mode.PRECOMMANDES, Category.SALON),
     ).rejects.toThrow(
-      "Python subprocess failed to parse XLS: Invalid JSON output from Python process: exit code 0",
+      "Python subprocess failed to parse XLS: exit code 0",
     );
   });
 
