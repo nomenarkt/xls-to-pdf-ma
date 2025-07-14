@@ -78,6 +78,20 @@ test("cleanBacklog handles quoted backlog entries", async () => {
   expect(backlog.trim()).toBe("");
 });
 
+test("cleanBacklog normalizes dash variants", async () => {
+  const backlogPath = path.join(tmp, "frontend", "backlog.md");
+  fs.writeFileSync(backlogPath, "### Codex Task: `Dash – Test`\n");
+  fs.writeFileSync(
+    path.join(tmp, "codex_task_tracker.md"),
+    `| frontend | Dash - Test | context | ✅ Done | - | - | - | - | - | - | - | 2025-01-01 | 2025-01-01 |\n`,
+    { flag: "a" },
+  );
+  const { cleanBacklog } = require("./taskLogger");
+  await cleanBacklog();
+  const backlog = fs.readFileSync(backlogPath, "utf8");
+  expect(backlog.trim()).toBe("");
+});
+
 test("updates existing row when task is logged twice", async () => {
   const logPath = path.join(tmp, "codex_task_tracker.md");
   jest.useFakeTimers().setSystemTime(new Date("2025-01-01"));

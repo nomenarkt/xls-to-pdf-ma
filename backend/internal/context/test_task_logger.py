@@ -40,6 +40,7 @@ def _setup_files(tmp_path: Path) -> None:
         "missing_files",
         "prefix_behavior",
         "hyphen_cleanup",
+        "dash_normalization",
     ],
 )
 def test_task_logger(tmp_path: Path, scenario: str) -> None:
@@ -131,6 +132,16 @@ def test_task_logger(tmp_path: Path, scenario: str) -> None:
                 description="notes",
             )
         )
+        assert backlog.read_text().strip() == ""
+
+    elif scenario == "dash_normalization":
+        backlog = tmp_path / "backend" / "backlog.md"
+        backlog.write_text("### Codex Task: `Dash – Test`\n")
+        with (tmp_path / "codex_task_tracker.md").open("a") as f:
+            f.write(
+                "| backend | Dash - Test | context | ✅ Done | - | - | - | - | - | - | - | 2025-01-01 | 2025-01-01 |\n"
+            )
+        tl.clean_backlog()
         assert backlog.read_text().strip() == ""
 
     tl.BASE_DIR = ""

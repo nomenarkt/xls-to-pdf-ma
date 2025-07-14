@@ -15,6 +15,16 @@ BACKLOG_FILE = "backend/backlog.md"
 TASK_LOG_FILE = "codex_task_tracker.md"
 
 
+def normalize_dashes(text: str) -> str:
+    """Replace en-dash/em-dash with hyphen."""
+    return re.sub(r"[\u2013\u2014]", "-", text)
+
+
+def extract_task_title(line: str) -> str | None:
+    match = re.search(r"codex task:\s*`?([^`]+)`?", line, re.IGNORECASE)
+    return normalize_dashes(match.group(1).strip()) if match else None
+
+
 @dataclass
 class TaskLogEntry:
     """Represents a single row in codex_task_tracker."""
@@ -130,7 +140,7 @@ def parse_done_tasks() -> set[str]:
             fields = [f.strip() for f in line.split("|")]
             if len(fields) < 14:
                 continue
-            name = fields[2]
+            name = normalize_dashes(fields[2].strip())
             status = fields[4]
             if status == "✅ Done":
                 tasks.add(name)
@@ -138,7 +148,7 @@ def parse_done_tasks() -> set[str]:
                 if ">" in name:
                     task_base = name.split(">", 1)[0].strip()
                     tasks.add(task_base)
-                trimmed = re.split(r"[\u2013-]", task_base, 1)[0].strip()
+                trimmed = task_base.split("-", 1)[0].strip()
                 if trimmed and trimmed != task_base:
                     tasks.add(trimmed)
     return tasks
@@ -151,12 +161,13 @@ def clean_backlog() -> None:
 
     done_normalized: set[str] = set()
     for name in done:
-        done_normalized.add(name)
-        task_base = name
-        if ">" in name:
-            task_base = name.split(">", 1)[0].strip()
+        normalized = normalize_dashes(name)
+        done_normalized.add(normalized)
+        task_base = normalized
+        if ">" in normalized:
+            task_base = normalized.split(">", 1)[0].strip()
             done_normalized.add(task_base)
-        trimmed = re.split(r"[\u2013-]", task_base, 1)[0].strip()
+        trimmed = task_base.split("-", 1)[0].strip()
         if trimmed and trimmed != task_base:
             done_normalized.add(trimmed)
 
@@ -168,22 +179,11 @@ def clean_backlog() -> None:
     lines = backlog_content.split("\n")
     result: list[str] = []
     skip = False
-    heading_rgx = re.compile(r"(?i)^.*Codex Task:")
 
     for line in lines:
-        trimmed = line.strip()
-        if (
-            heading_rgx.match(trimmed)
-            and not trimmed.startswith("<!--")
-            and not trimmed.startswith("*")
-            and not trimmed.startswith("-")
-            and '"' not in trimmed
-            and "'" not in trimmed
-        ):
-            idx = trimmed.lower().find("codex task:")
-            task_name = trimmed[idx + len("codex task:") :].strip()  # noqa: E203,E501
-            task_name = task_name.strip("[]")
-            if task_name in done_normalized:
+        title = extract_task_title(line)
+        if title is not None:
+            if title in done_normalized:
                 skip = True
                 continue
             skip = False
